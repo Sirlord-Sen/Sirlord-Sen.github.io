@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Research · Sir-Lord Wiafe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f5f2eb;
+  --ink:#0d0d0d;
+  --ink2:#2a2a2a;
+  --muted:#6b6460;
+  --accent:#c94a1a;
+  --accent2:#e8621f;
+  --surface:#ffffff;
+  --surface2:#edeae2;
+  --border:#d4cfc5;
+  --border2:#bfb9ad;
+  --teal:#1a7c6b;
+  --blue:#1a4a8c;
+  --gold:#b8860b;
+  --mono:'JetBrains Mono',monospace;
+  --display:'Bebas Neue',sans-serif;
+  --body:'Outfit',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);overflow-x:hidden;cursor:none}
+
+/* CUSTOM CURSOR */
+#cursor{position:fixed;width:10px;height:10px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform 0.1s,width 0.2s,height 0.2s}
+#cursor-ring{position:fixed;width:32px;height:32px;border:1.5px solid var(--accent);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all 0.15s ease;opacity:0.6}
+body:hover #cursor{opacity:1}
+
+/* NAVBAR */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--bg);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 3rem}
+.nav-logo{font-family:var(--display);font-size:22px;letter-spacing:0.05em;color:var(--ink)}
+.nav-logo span{color:var(--accent)}
+.nav-tabs{display:flex;gap:0}
+.nav-tab{padding:0 20px;height:60px;display:flex;align-items:center;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;transition:all 0.2s;background:none;border-left:none;border-right:none;border-top:none;text-decoration:none}
+.nav-tab:hover{color:var(--ink)}
+.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.nav-right{display:flex;align-items:center;gap:16px}
+.nav-badge{font-family:var(--mono);font-size:10px;background:var(--accent);color:#fff;padding:4px 10px;border-radius:2px;letter-spacing:0.05em}
+.nav-cite{font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+
+
+/* ===== HOME PAGE ===== */
+.hero{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 60px)}
+.hero-left{padding:5rem 3rem 3rem;display:flex;flex-direction:column;justify-content:space-between;border-right:1px solid var(--border)}
+.hero-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem;display:flex;align-items:center;gap:10px}
+.hero-eyebrow::before{content:'';display:block;width:32px;height:1px;background:var(--accent)}
+.hero-name{font-family:var(--display);font-size:clamp(72px,9vw,120px);line-height:0.9;letter-spacing:0.02em;color:var(--ink)}
+.hero-name .accent{color:var(--accent)}
+.hero-tagline{font-size:18px;color:var(--muted);line-height:1.6;max-width:480px;margin-top:2rem;font-weight:300}
+.hero-tagline strong{color:var(--ink);font-weight:500}
+.hero-stats{display:flex;gap:3rem;margin-top:3rem}
+.stat-block .num{font-family:var(--display);font-size:48px;color:var(--ink);line-height:1}
+.stat-block .num span{color:var(--accent)}
+.stat-block .lbl{font-size:12px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-top:4px}
+.hero-cta{display:flex;gap:12px;margin-top:3rem}
+.btn-primary{background:var(--accent);color:#fff;padding:12px 28px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;font-weight:500;border:none;cursor:pointer;transition:background 0.2s}
+.btn-primary:hover{background:var(--accent2)}
+.btn-outline{background:transparent;color:var(--ink);padding:12px 28px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;font-weight:500;border:1.5px solid var(--border2);cursor:pointer;transition:border-color 0.2s,color 0.2s}
+.btn-outline:hover{border-color:var(--ink);color:var(--ink)}
+
+/* HERO RIGHT - signal viz */
+.hero-right{position:relative;overflow:hidden;background:var(--ink)}
+canvas#heroCanvas{position:absolute;inset:0;width:100%;height:100%}
+.hero-overlay-text{position:absolute;bottom:3rem;left:3rem;right:3rem}
+.hero-overlay-text h2{font-family:var(--display);font-size:32px;color:#fff;margin-bottom:8px;letter-spacing:0.05em}
+.hero-overlay-text p{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6}
+.hero-tags{position:absolute;top:2rem;right:2rem;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.tag{font-family:var(--mono);font-size:10px;padding:5px 12px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);letter-spacing:0.1em;border:1px solid rgba(255,255,255,0.12)}
+
+/* EXPERTISE STRIP */
+.expertise-strip{display:flex;border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow-x:auto}
+.expertise-item{flex:1;min-width:200px;padding:2rem 2.5rem;border-right:1px solid var(--border);transition:background 0.2s;cursor:pointer}
+.expertise-item:last-child{border-right:none}
+.expertise-item:hover{background:var(--surface)}
+.exp-icon{font-size:22px;margin-bottom:12px}
+.exp-title{font-family:var(--display);font-size:22px;letter-spacing:0.03em;color:var(--ink);margin-bottom:6px}
+.exp-sub{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* CROSS-DOMAIN SECTION */
+.cross-domain{padding:5rem 3rem;background:var(--ink);color:#fff}
+.cross-domain-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:4rem}
+.section-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.section-title-lg{font-family:var(--display);font-size:clamp(40px,5vw,64px);line-height:1;letter-spacing:0.03em}
+.section-desc{font-size:14px;color:rgba(255,255,255,0.5);max-width:320px;line-height:1.7}
+.domain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,0.1)}
+.domain-card{background:var(--ink);padding:2.5rem;transition:background 0.2s}
+.domain-card:hover{background:#1a1a1a}
+.domain-origin{font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:0.1em;margin-bottom:8px}
+.domain-title{font-family:var(--display);font-size:24px;letter-spacing:0.03em;color:#fff;margin-bottom:10px}
+.domain-arrow{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:10px;letter-spacing:0.1em}
+.domain-apps{display:flex;flex-wrap:wrap;gap:6px}
+.domain-app{font-size:11px;padding:4px 10px;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.1)}
+
+/* FEATURED PAPER HOME */
+.featured-home{padding:5rem 3rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.featured-home-label{font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.featured-home-title{font-family:var(--display);font-size:clamp(36px,4vw,56px);line-height:1;color:var(--ink);margin-bottom:1.5rem}
+.featured-home-body{font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:2rem}
+.featured-mini-card{background:var(--surface);border:1px solid var(--border);padding:2rem;position:relative}
+.featured-mini-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+
+/* SKILLS SECTION ON HOME */
+.skills-home{padding:4rem 3rem;background:var(--surface2);border-top:1px solid var(--border)}
+.skills-home-inner{display:grid;grid-template-columns:1fr 2fr;gap:4rem}
+.skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.skill-tag{font-family:var(--mono);font-size:11px;padding:8px 14px;border:1px solid var(--border);color:var(--ink2);letter-spacing:0.05em;transition:all 0.2s;cursor:default}
+.skill-tag:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+.skill-tag.accent{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* ===== RESEARCH PAGE ===== */
+.research-header{padding:4rem 3rem 3rem;border-bottom:1px solid var(--border)}
+.research-header h1{font-family:var(--display);font-size:clamp(48px,6vw,80px);line-height:1;letter-spacing:0.03em;margin-bottom:1rem}
+.research-header p{font-size:15px;color:var(--muted);max-width:600px;line-height:1.7}
+.papers-list{padding:3rem}
+.paper-item{display:grid;grid-template-columns:80px 1fr auto;gap:2rem;align-items:start;padding:2rem 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.2s}
+.paper-item:hover{background:var(--surface);margin:0 -3rem;padding:2rem 3rem}
+.paper-year{font-family:var(--display);font-size:36px;color:var(--border2);letter-spacing:0.02em;padding-top:4px}
+.paper-body{}
+.paper-title{font-family:var(--display);font-size:22px;letter-spacing:0.02em;color:var(--ink);margin-bottom:6px;line-height:1.2}
+.paper-meta{font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:0.1em;margin-bottom:8px}
+.paper-abstract{font-size:13px;color:var(--muted);line-height:1.7;max-width:700px}
+.paper-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ptag{font-size:10px;padding:3px 10px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);letter-spacing:0.05em}
+.ptag.highlight{background:var(--accent);color:#fff;border-color:var(--accent)}
+.paper-venue{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:right;padding-top:4px;white-space:nowrap}
+
+/* ===== SKILLS PAGE ===== */
+.skills-page{padding:4rem 3rem}
+.skills-page h1{font-family:var(--display);font-size:clamp(48px,6vw,80px);letter-spacing:0.03em;margin-bottom:3rem;line-height:1}
+.skills-tiers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2rem;margin-bottom:4rem}
+.skill-tier-card{background:var(--surface);border:1px solid var(--border);padding:2rem}
+.skill-tier-title{font-family:var(--display);font-size:24px;letter-spacing:0.03em;color:var(--ink);margin-bottom:4px}
+.skill-tier-sub{font-size:11px;color:var(--muted);margin-bottom:1.5rem;font-family:var(--mono);letter-spacing:0.08em}
+.skill-list{display:flex;flex-direction:column;gap:12px}
+.skill-row{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.skill-name{color:var(--ink2)}
+.skill-bar-wrap{width:120px;height:3px;background:var(--border)}
+.skill-bar{height:100%;background:var(--accent);transition:width 1.2s ease}
+.skill-level{font-family:var(--mono);font-size:10px;color:var(--muted);min-width:24px;text-align:right}
+
+/* INTERACTIVE DEMO SECTION */
+.demo-section{background:var(--ink);color:#fff;padding:4rem 3rem}
+.demo-section h2{font-family:var(--display);font-size:clamp(36px,4vw,52px);letter-spacing:0.03em;margin-bottom:8px}
+.demo-section .sub{font-size:14px;color:rgba(255,255,255,0.4);margin-bottom:3rem;line-height:1.7}
+.demos-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.demo-card{background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);padding:2rem;cursor:pointer;transition:border-color 0.2s}
+.demo-card:hover{border-color:var(--accent)}
+.demo-card h3{font-family:var(--display);font-size:22px;letter-spacing:0.03em;color:#fff;margin-bottom:8px}
+.demo-card p{font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6;margin-bottom:1.5rem}
+.demo-canvas-wrap{border-radius:2px;overflow:hidden}
+.demo-play{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:0.1em;margin-top:1rem;cursor:pointer}
+
+/* DTW DEMO */
+.dtw-demo{padding:1rem;background:#111;border-radius:2px}
+canvas.dtw-canvas{width:100%;height:100px;display:block}
+
+/* ===== ABOUT PAGE ===== */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 60px)}
+.about-left{padding:5rem 3rem;border-right:1px solid var(--border)}
+.about-left h1{font-family:var(--display);font-size:clamp(56px,7vw,90px);letter-spacing:0.03em;line-height:0.9;margin-bottom:3rem}
+.about-para{font-size:15px;color:var(--muted);line-height:1.9;margin-bottom:1.5rem}
+.about-para strong{color:var(--ink)}
+.about-right{padding:5rem 3rem;background:var(--surface)}
+.timeline{position:relative;padding-left:2rem}
+.timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border)}
+.tl-item{position:relative;margin-bottom:2.5rem}
+.tl-item::before{content:'';position:absolute;left:-2rem;top:6px;width:8px;height:8px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}
+.tl-date{font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:0.1em;margin-bottom:4px}
+.tl-title{font-weight:500;font-size:15px;color:var(--ink);margin-bottom:2px}
+.tl-org{font-size:13px;color:var(--muted)}
+.contact-strip{padding:3rem;background:var(--ink);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.contact-strip h2{font-family:var(--display);font-size:36px;color:#fff;letter-spacing:0.03em}
+.contact-links{display:flex;gap:16px;flex-wrap:wrap}
+.contact-link{font-family:var(--mono);font-size:11px;padding:10px 20px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);cursor:pointer;transition:all 0.2s;text-decoration:none}
+.contact-link:hover{background:#fff;color:var(--ink)}
+
+/* ===== INTERACTIVE PAGE ===== */
+.interactive-page{padding:4rem 3rem}
+.interactive-page h1{font-family:var(--display);font-size:clamp(48px,6vw,80px);letter-spacing:0.03em;margin-bottom:8px;line-height:1}
+.interactive-page .sub{font-size:14px;color:var(--muted);max-width:600px;line-height:1.7;margin-bottom:3rem}
+.int-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:3rem}
+.int-tab{padding:12px 24px;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;background:none;border-left:none;border-right:none;border-top:none}
+.int-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.int-panel{display:none}
+.int-panel.active{display:block}
+
+/* DTW Interactive */
+.dtw-interactive{background:var(--surface);border:1px solid var(--border);padding:2rem}
+.dtw-controls{display:flex;gap:2rem;margin-bottom:2rem;flex-wrap:wrap}
+.ctrl{display:flex;flex-direction:column;gap:6px}
+.ctrl label{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-family:var(--mono)}
+.ctrl input[type=range]{width:180px;accent-color:var(--accent)}
+.ctrl-val{font-family:var(--mono);font-size:12px;color:var(--accent)}
+canvas#dtwMainCanvas{width:100%;height:200px;display:block;background:#fafaf8;border:1px solid var(--border)}
+
+/* Inertia Interactive */
+.inertia-int{background:var(--surface);border:1px solid var(--border);padding:2rem}
+canvas#inertiaMainCanvas{width:100%;height:200px;display:block;background:#0d0d0d;border:1px solid var(--border)}
+.regime-row{display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap}
+.rg-badge{padding:8px 18px;font-size:12px;font-weight:500;letter-spacing:0.06em;border:1.5px solid var(--border);cursor:pointer;transition:all 0.2s}
+.rg-badge.locked-active{background:#1a7c6b;color:#fff;border-color:#1a7c6b}
+.rg-badge.stabilizing-active{background:#b8860b;color:#fff;border-color:#b8860b}
+.rg-badge.shifting-active{background:#c94a1a;color:#fff;border-color:#c94a1a}
+
+/* DyCoM viz */
+.dycom-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-top:1rem}
+.dycom-op{background:var(--surface);padding:1.5rem 1rem;text-align:center;cursor:pointer;transition:background 0.2s}
+.dycom-op:hover{background:var(--ink);color:#fff}
+.dycom-op:hover .dycom-op-title{color:#fff}
+.dycom-op:hover .dycom-op-sub{color:rgba(255,255,255,0.5)}
+.dycom-op-icon{font-size:24px;margin-bottom:8px}
+.dycom-op-title{font-family:var(--display);font-size:18px;letter-spacing:0.03em;color:var(--ink);margin-bottom:4px}
+.dycom-op-sub{font-size:11px;color:var(--muted);line-height:1.4}
+.dycom-output{background:var(--surface2);border:1px solid var(--border);padding:1.5rem;margin-top:1rem;font-size:13px;color:var(--ink2);line-height:1.7;font-family:var(--mono);min-height:80px}
+
+/* SCROLL ANIMATION */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity 0.6s ease,transform 0.6s ease}
+.reveal.visible{opacity:1;transform:none}
+
+/* TICKER */
+.ticker-wrap{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--ink);padding:12px 0}
+.ticker{display:flex;gap:0;white-space:nowrap;animation:ticker 40s linear infinite}
+.ticker-item{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:0.1em;padding:0 3rem}
+.ticker-item span{color:var(--accent)}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* Footer */
+footer{background:var(--ink);padding:3rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;border-top:1px solid rgba(255,255,255,0.05)}
+footer p{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:0.05em}
+.footer-links{display:flex;gap:20px}
+.footer-links a{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.4);text-decoration:none;letter-spacing:0.08em;cursor:pointer}
+.footer-links a:hover{color:var(--accent)}
+
+/* MOBILE */
+@media(max-width:768px){
+  nav{padding:0 1.5rem}
+  .nav-tabs{display:none}
+  .hero{grid-template-columns:1fr}
+  .hero-right{height:40vh}
+  .hero-left{padding:3rem 1.5rem}
+  .domain-grid{grid-template-columns:1fr}
+  .featured-home{grid-template-columns:1fr;padding:3rem 1.5rem}
+  .about-grid{grid-template-columns:1fr}
+  .skills-tiers{grid-template-columns:1fr}
+  .demos-grid{grid-template-columns:1fr}
+  .papers-list{padding:1.5rem}
+  .paper-item{grid-template-columns:1fr;gap:0.5rem}
+  .paper-year{font-size:24px}
+}
+</style>
+
+</head>
+<body>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<nav>
+  <div class="nav-logo">SIR<span>-</span>LORD<span style="color:var(--ink)"> WIAFE</span></div>
+  <div class="nav-tabs">
+    <a class="nav-tab" href="index.html">Home</a>
+    <a class="nav-tab active" href="research.html">Research</a>
+    <a class="nav-tab" href="skills.html">Skills</a>
+    <a class="nav-tab" href="interactive.html">Interactive</a>
+    <a class="nav-tab" href="about.html">About</a>
+  </div>
+  <div class="nav-right">
+    <span class="nav-cite">60 Citations</span>
+    <span class="nav-badge">Hiring</span>
+  </div>
+</nav>
+<div style="padding-top:60px">
+<div class="research-header">
+    <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:12px">26 Publications · 60 Citations · h-index 5</div>
+    <h1>Research<br><span style="color:var(--accent)">Papers</span></h1>
+    <p>Building domain-agnostic frameworks for understanding complex dynamical systems — applied to the brain as the world's most complex test case.</p>
+  </div>
+  <div class="papers-list">
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2026</div>
+      <div class="paper-body">
+        <div class="paper-meta">FUNCTIONAL SYSTEMS · PREPRINT</div>
+        <div class="paper-title">Functional Inertia Reveals History-Dependent Organization of Large-Scale Brain Dynamics</div>
+        <p class="paper-abstract">Introduces <strong>functional inertia</strong> — a representation-agnostic constraint measuring how accumulated prior states resist ongoing reorganization. Three recurrent dynamical regimes (Locked / Stabilizing / Shifting) and a system-level inertial magnitude with opposite cognitive signatures across diagnostic contexts. Full mediation proves cumulative integration is essential.</p>
+        <div class="paper-tags"><span class="ptag highlight">Lead Author</span><span class="ptag">Inertial State-Space</span><span class="ptag">Dynamic Systems</span><span class="ptag">State Estimation</span><span class="ptag">Schizophrenia</span></div>
+      </div>
+      <div class="paper-venue">Preprint · 2026<br>w/ Calhoun</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2026</div>
+      <div class="paper-body">
+        <div class="paper-meta">OPERATOR THEORY · BIORXIV · 2 CITATIONS</div>
+        <div class="paper-title">Dynamic Co-Modulation (DyCoM): A Unified Operator Framework for Dynamic Connectivity in Neuroimaging</div>
+        <p class="paper-abstract">Introduces <strong>DyCoM</strong> — a compact operator-level framework expressing dynamic connectivity estimators as compositions of four fundamental signal processing operations. Domain-agnostic by design: applies to any multivariate time series. Resolves previously conflicting neurobiological signatures through principled operator decomposition.</p>
+        <div class="paper-tags"><span class="ptag highlight">Lead Author</span><span class="ptag">Operator Framework</span><span class="ptag">Signal Processing</span><span class="ptag highlight">Domain-Agnostic</span></div>
+      </div>
+      <div class="paper-venue">bioRxiv · 2026<br>w/ Soleimani, Calhoun</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2026</div>
+      <div class="paper-body">
+        <div class="paper-meta">GRAPH NETWORKS · ARXIV · 2 CITATIONS</div>
+        <div class="paper-title">KOCOBrain: Kuramoto-Guided Graph Network for Uncovering Structure-Function Coupling in Adolescent Prenatal Drug Exposure</div>
+        <p class="paper-abstract">Kuramoto oscillator-informed graph neural network uncovering structure-function coupling in children with prenatal drug exposure. Links dynamic network topology to neurodevelopmental trajectories using physics-inspired graph learning.</p>
+        <div class="paper-tags"><span class="ptag">Co-Author</span><span class="ptag">Graph Networks</span><span class="ptag">Oscillator Dynamics</span><span class="ptag">Neurodevelopment</span></div>
+      </div>
+      <div class="paper-venue">arXiv · 2026<br>Mazumder, Wu, Wiafe et al.</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2026</div>
+      <div class="paper-body">
+        <div class="paper-meta">PUBLISHED · NETWORK NEUROSCIENCE · 5 CITATIONS</div>
+        <div class="paper-title">A Novel Framework to Quantify Dynamic Convergence and Divergence of Overlapping Brain States Characterizing Four Psychiatric Disorders</div>
+        <p class="paper-abstract">Novel framework quantifying dynamic convergence and divergence across overlapping brain states in four psychiatric disorders simultaneously. Demonstrates shared and disorder-specific dynamic signatures. Published in Network Neuroscience, 10(1):93–117.</p>
+        <div class="paper-tags"><span class="ptag">Co-Author</span><span class="ptag">Dynamic States</span><span class="ptag">Multi-disorder</span><span class="ptag highlight">Published</span></div>
+      </div>
+      <div class="paper-venue">Network Neuroscience<br>10(1):93–117 · 2026<br>Soleimani, Wiafe et al.</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2026</div>
+      <div class="paper-body">
+        <div class="paper-meta">KOOPMAN DYNAMICS · ARXIV</div>
+        <div class="paper-title">NeuroBRIDGE: Behavior-Conditioned Koopman Dynamics with Riemannian Alignment for Early Substance Use Initiation Prediction from Longitudinal Functional Connectome</div>
+        <p class="paper-abstract">Koopman operator dynamics with Riemannian manifold alignment for predicting early substance use initiation from longitudinal connectome data. Bridges behavior-conditioned latent dynamics with brain connectivity trajectories using geometric deep learning.</p>
+        <div class="paper-tags"><span class="ptag">Co-Author</span><span class="ptag">Koopman Operators</span><span class="ptag">Riemannian Geometry</span><span class="ptag">Longitudinal</span></div>
+      </div>
+      <div class="paper-venue">arXiv · 2026<br>Mazumder, Wiafe et al.</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2026</div>
+      <div class="paper-body">
+        <div class="paper-meta">GRAPH ATTENTION · ARXIV</div>
+        <div class="paper-title">Learning Structural-Functional Brain Representations through Multi-Scale Adaptive Graph Attention for Cognitive Insight</div>
+        <p class="paper-abstract">Multi-scale adaptive graph attention network learning joint structural-functional brain representations for cognitive insight. Links anatomical connectivity to functional dynamics at multiple spatial scales via adaptive attention mechanisms.</p>
+        <div class="paper-tags"><span class="ptag">Co-Author</span><span class="ptag">Graph Attention</span><span class="ptag">Multi-modal</span><span class="ptag">Cognition</span></div>
+      </div>
+      <div class="paper-venue">arXiv · 2026<br>Mazumder, Wiafe et al.</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2026</div>
+      <div class="paper-body">
+        <div class="paper-meta">STRUCTURAL MRI · BIORXIV · 1 CITATION</div>
+        <div class="paper-title">Structural Co-Modulation: An Individualized Measure of Inter-Component Interactions in Source-Based Morphometry</div>
+        <p class="paper-abstract">Adapts the DyCoM co-modulation operator principle to structural neuroimaging — introducing individualized inter-component interaction measures in source-based morphometry. Demonstrates operator-level decomposition generalizes from functional to structural imaging.</p>
+        <div class="paper-tags"><span class="ptag">Co-Author</span><span class="ptag">Operator Extension</span><span class="ptag">Structural MRI</span><span class="ptag">Individualized</span></div>
+      </div>
+      <div class="paper-venue">bioRxiv · 2026<br>Kotoski, Soleimani, Wiafe et al.</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2026</div>
+      <div class="paper-body">
+        <div class="paper-meta">PUBLISHED · BRAIN SCIENCES</div>
+        <div class="paper-title">Activity Patterns in Relation to Dynamic Functional Network States: A Longitudinal Feasibility Study of Brain–Behavior Associations in Young Adults</div>
+        <p class="paper-abstract">Longitudinal study linking activity patterns to dynamic functional network states. Demonstrates brain-behavior associations evolve with training, with functional network regime occupancy providing a stable organizing framework across time.</p>
+        <div class="paper-tags"><span class="ptag">Co-Author</span><span class="ptag">Longitudinal</span><span class="ptag">Brain-Behavior</span><span class="ptag highlight">Published</span></div>
+      </div>
+      <div class="paper-venue">Brain Sciences<br>16(3):327 · 2026<br>Soleimani, Wiafe et al.</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2026</div>
+      <div class="paper-body">
+        <div class="paper-meta">NEUROPLASTICITY · PREPRINT</div>
+        <div class="paper-title">Training-Induced Plasticity in Dynamic Functional Network States: Divergence and Occupancy Associations with Behavioral and Cognitive Measures in Healthy Young Adults</div>
+        <p class="paper-abstract">Training-induced plasticity expressed through shifts in dynamic network state occupancy and divergence metrics. Associates regime engagement changes with behavioral and cognitive improvement in healthy young adults over training.</p>
+        <div class="paper-tags"><span class="ptag">Co-Author</span><span class="ptag">Neuroplasticity</span><span class="ptag">Dynamic States</span><span class="ptag">Cognition</span></div>
+      </div>
+      <div class="paper-venue">Preprint · 2026<br>Soleimani, Wiafe et al.</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2026</div>
+      <div class="paper-body">
+        <div class="paper-meta">DEPRESSION · BIORXIV</div>
+        <div class="paper-title">Functional Connectivity Changes in Major Depressive Disorder</div>
+        <p class="paper-abstract">Characterizes functional connectivity alterations in major depressive disorder, identifying network-level disruptions and dynamic state changes as candidate biomarkers for clinical expression and treatment stratification.</p>
+        <div class="paper-tags"><span class="ptag">Co-Author</span><span class="ptag">Depression</span><span class="ptag">Functional Connectivity</span><span class="ptag">Clinical Biomarkers</span></div>
+      </div>
+      <div class="paper-venue">bioRxiv · 2026<br>Sridhar, Wiafe, Baker, Calhoun</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2025</div>
+      <div class="paper-body">
+        <div class="paper-meta">SIGNAL ALIGNMENT · ICASSP 2026 (ACCEPTED) · 1 CITATION</div>
+        <div class="paper-title">Warp Quantification Analysis: A Framework for Path-Based Signal Alignment Metrics</div>
+        <p class="paper-abstract">Introduces <strong>Warp Quantification Analysis (WQA)</strong> — a comprehensive framework formalizing path-based signal alignment metrics. Unifies DTW distance, warp deviation variance (WDV), path length ratio, and alignment cost into a coherent, general-purpose analysis system applicable to any time-series alignment problem.</p>
+        <div class="paper-tags"><span class="ptag highlight">Lead Author</span><span class="ptag highlight">ICASSP 2026</span><span class="ptag">Temporal Alignment</span><span class="ptag">WQA</span><span class="ptag">Signal Metrics</span></div>
+      </div>
+      <div class="paper-venue">arXiv · 2025<br>ICASSP 2026<br>w/ Calhoun</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2025</div>
+      <div class="paper-body">
+        <div class="paper-meta">DIRECTIONAL COUPLING · ARXIV · 1 CITATION</div>
+        <div class="paper-title">Complex-Valued Phase Synchrony Reveals Directional Coupling in fMRI and Tracks Medication Effects</div>
+        <p class="paper-abstract">Proposes <strong>CVPS</strong> — a complex-valued phase synchrony framework using an adaptive wavelet that preserves both cosine and sine components, recovering true phase offsets and directional lead-lag structure. Reveals cortical drivers consistent with pharmacological receptor targets. PLV discards direction; CVPS keeps it.</p>
+        <div class="paper-tags"><span class="ptag highlight">Lead Author</span><span class="ptag">Phase Synchrony</span><span class="ptag">Directional Coupling</span><span class="ptag">Wavelet Analysis</span></div>
+      </div>
+      <div class="paper-venue">arXiv · 2025<br>w/ Soleimani, Miller, Faghiri et al.</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2025</div>
+      <div class="paper-body">
+        <div class="paper-meta">DYNAMIC AMPLITUDE · BIORXIV · 3 CITATIONS</div>
+        <div class="paper-title">Aberrant Recovery of Timescale-Aligned Amplitude Balance Links to Symptoms and Cognition in Schizophrenia</div>
+        <p class="paper-abstract">Normalized DTW framework for capturing timescale-aligned amplitude balance across brain networks. Healthy brains maintain balanced signal distribution; schizophrenia shows aberrant recovery patterns in this balance that directly link to positive/negative symptom severity and cognitive performance.</p>
+        <div class="paper-tags"><span class="ptag highlight">Lead Author</span><span class="ptag">Amplitude Dynamics</span><span class="ptag">DTW</span><span class="ptag">Signal Balance</span><span class="ptag">Schizophrenia</span></div>
+      </div>
+      <div class="paper-venue">bioRxiv · 2025<br>w/ Kinsey, Soleimani et al.</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2025</div>
+      <div class="paper-body">
+        <div class="paper-meta">STATE-SPACE RECONSTRUCTION · ARXIV</div>
+        <div class="paper-title">Robust State-Space Reconstruction of Brain Dynamics via Bootstrap Monte Carlo SSA</div>
+        <p class="paper-abstract">Bootstrap Monte Carlo Singular Spectrum Analysis for robust state-space reconstruction of brain dynamics. Provides noise-resilient latent trajectory estimation with full uncertainty quantification — a principled approach directly applicable to any noisy multivariate dynamical system.</p>
+        <div class="paper-tags"><span class="ptag highlight">Lead Author</span><span class="ptag">State-Space</span><span class="ptag">Monte Carlo</span><span class="ptag">Uncertainty Quantification</span></div>
+      </div>
+      <div class="paper-venue">arXiv · 2025<br>w/ Hinsley, Calhoun</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2025</div>
+      <div class="paper-body">
+        <div class="paper-meta">SIGNAL PROCESSING · BRAIN CONNECTIVITY · 12 CITATIONS</div>
+        <div class="paper-title">Studying Time-Resolved Functional Connectivity via Communication Theory: On the Complementary Nature of Phase Synchronization and Sliding Window Pearson Correlation</div>
+        <p class="paper-abstract">Communication-theoretic analysis proving phase synchronization and SWPC are <strong>complementary</strong> estimators, not competing ones. Phase methods capture weak high-frequency coupling; amplitude methods capture strong low-frequency dynamics. Method choice encodes a computational prior about signal structure.</p>
+        <div class="paper-tags"><span class="ptag highlight">Lead Author</span><span class="ptag">Communication Theory</span><span class="ptag">Phase Synchrony</span><span class="ptag highlight">Published</span></div>
+      </div>
+      <div class="paper-venue">Brain Connectivity<br>15(8):300–318 · 2025<br>w/ Asante, Calhoun, Faghiri</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2025</div>
+      <div class="paper-body">
+        <div class="paper-meta">NORMALIZED DTW · IEEE EMBC 2025 · 6 CITATIONS</div>
+        <div class="paper-title">Normalized Dynamic Time Warping Increases Sensitivity in Differentiating Functional Network Connectivity in Schizophrenia</div>
+        <p class="paper-abstract">Normalization of DTW distances substantially improves sensitivity for detecting functional network connectivity differences in schizophrenia. Establishes normalized DTW as a more clinically powerful connectivity metric than standard correlation approaches.</p>
+        <div class="paper-tags"><span class="ptag highlight">Lead Author</span><span class="ptag">Normalized DTW</span><span class="ptag">Schizophrenia</span><span class="ptag highlight">IEEE EMBC</span></div>
+      </div>
+      <div class="paper-venue">IEEE EMBC 2025<br>w/ Kinsey, Iraji, Miller, Calhoun</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2025</div>
+      <div class="paper-body">
+        <div class="paper-meta">FUNCTIONAL INERTIA · BIORXIV</div>
+        <div class="paper-title">Functional Inertia Index of Memory-Retaining Brain Dynamics: A Measure of Large-Scale Brain Adaptability</div>
+        <p class="paper-abstract">Early formulation of the functional inertia index through memory-retaining dynamics. Establishes adaptability as the inverse of inertia — a measurable, continuous axis for quantifying how readily any dynamical system reorganizes from its accumulated history.</p>
+        <div class="paper-tags"><span class="ptag highlight">Lead Author</span><span class="ptag">Functional Inertia</span><span class="ptag">Adaptability</span><span class="ptag">Memory Dynamics</span></div>
+      </div>
+      <div class="paper-venue">bioRxiv · 2025<br>w/ Calhoun</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2025</div>
+      <div class="paper-body">
+        <div class="paper-meta">SIGNAL BALANCE · BIORXIV</div>
+        <div class="paper-title">Timescale-Normalized fMRI Reveals Disrupted Dynamic Signal-Energy Balance in Schizophrenia</div>
+        <p class="paper-abstract">Timescale normalization via DTW reveals systematic disruptions in dynamic signal-energy balance in schizophrenia. Establishes temporal normalization as a necessary preprocessing step before amplitude-based connectivity analysis in clinical populations.</p>
+        <div class="paper-tags"><span class="ptag highlight">Lead Author</span><span class="ptag">Signal Balance</span><span class="ptag">Schizophrenia</span><span class="ptag">DTW Normalization</span></div>
+      </div>
+      <div class="paper-venue">bioRxiv · 2025<br>w/ Kinsey, Soleimani et al.</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2025</div>
+      <div class="paper-body">
+        <div class="paper-meta">SEX DIFFERENCES · BIORXIV · 1 CITATION</div>
+        <div class="paper-title">Neural Flexibility in Metabolic Demand Dynamics Reveals Sex-Specific Differences and Supports Cognition in Late Childhood</div>
+        <p class="paper-abstract">Applies timescale-normalized DTW framework to reveal sex-specific differences in neural flexibility and metabolic demand dynamics in late childhood. Links dynamic amplitude balance to domain-specific cognitive support mechanisms.</p>
+        <div class="paper-tags"><span class="ptag">Co-Author</span><span class="ptag">Neural Flexibility</span><span class="ptag">Sex Differences</span><span class="ptag">Neurodevelopment</span></div>
+      </div>
+      <div class="paper-venue">bioRxiv · 2025<br>Kotoski, Wiafe, Calhoun</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2025</div>
+      <div class="paper-body">
+        <div class="paper-meta">MULTIMODAL MRI · BIORXIV + IEEE ISBI · 1 CITATION</div>
+        <div class="paper-title">Dynamic Inter-Modality Source Coupling Reveals Sex Differences in Brain Structural-Functional Network Connectivity: A Multimodal MRI Study of the ABCD Dataset</div>
+        <p class="paper-abstract">Dynamic coupling across structural and functional MRI modalities reveals sex differences in developing brains from the ABCD dataset. Demonstrates operator-based co-modulation analysis generalizes seamlessly across imaging modalities.</p>
+        <div class="paper-tags"><span class="ptag">Co-Author</span><span class="ptag">Multi-modal</span><span class="ptag">Sex Differences</span><span class="ptag">ABCD Dataset</span></div>
+      </div>
+      <div class="paper-venue">bioRxiv · 2025<br>IEEE ISBI 2025<br>Kotoski, Wiafe, Calhoun</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2025</div>
+      <div class="paper-body">
+        <div class="paper-meta">STRUCTURAL-FUNCTIONAL · IEEE ISBI 2025</div>
+        <div class="paper-title">Sex Differences in Coupled Dynamic Functional Connectivity and Structural Brain Morphology: Insights from the ABCD Study</div>
+        <p class="paper-abstract">Sex-specific coupling between dynamic functional connectivity and structural morphology in the ABCD pediatric dataset. Dynamic connectivity-morphology co-modulation differs systematically by sex across development.</p>
+        <div class="paper-tags"><span class="ptag">Co-Author</span><span class="ptag">Structural-Functional</span><span class="ptag">Sex Differences</span><span class="ptag highlight">IEEE ISBI</span></div>
+      </div>
+      <div class="paper-venue">IEEE ISBI 2025<br>Kotoski, Wiafe, Calhoun</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2025</div>
+      <div class="paper-body">
+        <div class="paper-meta">INFANCY · BIORXIV</div>
+        <div class="paper-title">Spatial Dissimilarity Trajectories Reveal Rapid Functional Network Refinement During Early Infancy</div>
+        <p class="paper-abstract">Spatial dissimilarity trajectory analysis reveals rapid functional network refinement in early infancy, demonstrating temporal alignment methods capture neurodevelopmental dynamics across vastly different timescales — from milliseconds to months.</p>
+        <div class="paper-tags"><span class="ptag">Co-Author</span><span class="ptag">Neurodevelopment</span><span class="ptag">Spatial Dynamics</span><span class="ptag">Infancy</span></div>
+      </div>
+      <div class="paper-venue">bioRxiv · 2025<br>Seraji, Shultz, Wiafe et al.</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2025</div>
+      <div class="paper-body">
+        <div class="paper-meta">SLEEP & MEMORY · IEEE EMBC 2025</div>
+        <div class="paper-title">The Role of Sleep Duration and Age in Neural Reactivation and Episodic Memory Performance Across the Adult Lifespan</div>
+        <p class="paper-abstract">Sleep duration and aging interact to shape neural reactivation and episodic memory performance. Dynamic network state analysis reveals age-dependent changes in memory consolidation mechanisms across the adult lifespan.</p>
+        <div class="paper-tags"><span class="ptag">Co-Author</span><span class="ptag">Sleep</span><span class="ptag">Memory</span><span class="ptag highlight">IEEE EMBC</span></div>
+      </div>
+      <div class="paper-venue">IEEE EMBC 2025<br>Seraji, Soroush, Wiafe et al.</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2024</div>
+      <div class="paper-body">
+        <div class="paper-meta">TEMPORAL DYNAMICS · IMAGING NEUROSCIENCE · MIT PRESS · 16 CITATIONS</div>
+        <div class="paper-title">The Dynamics of Dynamic Time Warping in fMRI Data: A Method to Capture Inter-Network Stretching and Shrinking via Warp Elasticity</div>
+        <p class="paper-abstract">Proposes <strong>Warp Elasticity</strong> — a novel metric using DTW alignment to capture temporal coupling timescales between network pairs. Captures nonlinear stretching and shrinking across brain regions. High replicability, noise robustness, and significant clinical discriminability across independent datasets. 16 citations.</p>
+        <div class="paper-tags"><span class="ptag highlight">Lead Author</span><span class="ptag">Warp Elasticity</span><span class="ptag">Temporal Alignment</span><span class="ptag highlight">MIT Press</span></div>
+      </div>
+      <div class="paper-venue">Imaging Neuroscience<br>MIT Press · 2024<br>w/ Faghiri, Fu, Miller et al.</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2024</div>
+      <div class="paper-body">
+        <div class="paper-meta">WARP ELASTICITY · IEEE ISBI 2024 · 7 CITATIONS</div>
+        <div class="paper-title">Capturing Stretching and Shrinking of Inter-Network Temporal Coupling in fMRI Via WARP Elasticity</div>
+        <p class="paper-abstract">Conference paper introducing warp elasticity for inter-network temporal coupling analysis. Validates warp states as clinically meaningful markers distinguishing healthy controls from schizophrenia with high replicability.</p>
+        <div class="paper-tags"><span class="ptag highlight">Lead Author</span><span class="ptag">Warp Elasticity</span><span class="ptag highlight">IEEE ISBI</span><span class="ptag">fMRI</span></div>
+      </div>
+      <div class="paper-venue">IEEE ISBI 2024<br>w/ Faghiri, Fu, Miller, Calhoun</div>
+    </div>
+
+    <div class="paper-item reveal">
+      <div class="paper-year">2023</div>
+      <div class="paper-body">
+        <div class="paper-meta">SIGNAL THEORY · IEEE EMBC 2023 · 3 CITATIONS</div>
+        <div class="paper-title">Phase and Amplitude, Two Sides of Functional Connectivity</div>
+        <p class="paper-abstract">Foundational work establishing the amplitude-phase duality in functional connectivity estimation. Demonstrates the correlation between SWPC and phase synchrony is time-dependent — motivating the full communication-theoretic analysis that followed in Brain Connectivity 2025.</p>
+        <div class="paper-tags"><span class="ptag highlight">Lead Author</span><span class="ptag">Phase Analysis</span><span class="ptag">Foundational Theory</span><span class="ptag highlight">IEEE EMBC</span></div>
+      </div>
+      <div class="paper-venue">IEEE EMBC 2023<br>w/ Fu, Calhoun, Faghiri</div>
+    </div>
+
+  </div>
+</div>
+<script>
+// CURSOR
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px'; cur.style.top = e.clientY + 'px';
+  setTimeout(() => { ring.style.left = e.clientX + 'px'; ring.style.top = e.clientY + 'px'; }, 60);
+});
+document.querySelectorAll('button,a,.paper-item,.expertise-item,.domain-card,.skill-tag').forEach(el => {
+  el.addEventListener('mouseenter', () => { ring.style.width='48px'; ring.style.height='48px'; ring.style.borderColor='#c94a1a'; });
+  el.addEventListener('mouseleave', () => { ring.style.width='32px'; ring.style.height='32px'; ring.style.borderColor='#c94a1a'; });
+});
+
+// REVEAL ON SCROLL
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

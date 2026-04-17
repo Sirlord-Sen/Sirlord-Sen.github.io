@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive · Sir-Lord Wiafe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f5f2eb;
+  --ink:#0d0d0d;
+  --ink2:#2a2a2a;
+  --muted:#6b6460;
+  --accent:#c94a1a;
+  --accent2:#e8621f;
+  --surface:#ffffff;
+  --surface2:#edeae2;
+  --border:#d4cfc5;
+  --border2:#bfb9ad;
+  --teal:#1a7c6b;
+  --blue:#1a4a8c;
+  --gold:#b8860b;
+  --mono:'JetBrains Mono',monospace;
+  --display:'Bebas Neue',sans-serif;
+  --body:'Outfit',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);overflow-x:hidden;cursor:none}
+
+/* CUSTOM CURSOR */
+#cursor{position:fixed;width:10px;height:10px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform 0.1s,width 0.2s,height 0.2s}
+#cursor-ring{position:fixed;width:32px;height:32px;border:1.5px solid var(--accent);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all 0.15s ease;opacity:0.6}
+body:hover #cursor{opacity:1}
+
+/* NAVBAR */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--bg);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 3rem}
+.nav-logo{font-family:var(--display);font-size:22px;letter-spacing:0.05em;color:var(--ink)}
+.nav-logo span{color:var(--accent)}
+.nav-tabs{display:flex;gap:0}
+.nav-tab{padding:0 20px;height:60px;display:flex;align-items:center;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;transition:all 0.2s;background:none;border-left:none;border-right:none;border-top:none;text-decoration:none}
+.nav-tab:hover{color:var(--ink)}
+.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.nav-right{display:flex;align-items:center;gap:16px}
+.nav-badge{font-family:var(--mono);font-size:10px;background:var(--accent);color:#fff;padding:4px 10px;border-radius:2px;letter-spacing:0.05em}
+.nav-cite{font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+
+
+/* ===== HOME PAGE ===== */
+.hero{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 60px)}
+.hero-left{padding:5rem 3rem 3rem;display:flex;flex-direction:column;justify-content:space-between;border-right:1px solid var(--border)}
+.hero-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem;display:flex;align-items:center;gap:10px}
+.hero-eyebrow::before{content:'';display:block;width:32px;height:1px;background:var(--accent)}
+.hero-name{font-family:var(--display);font-size:clamp(72px,9vw,120px);line-height:0.9;letter-spacing:0.02em;color:var(--ink)}
+.hero-name .accent{color:var(--accent)}
+.hero-tagline{font-size:18px;color:var(--muted);line-height:1.6;max-width:480px;margin-top:2rem;font-weight:300}
+.hero-tagline strong{color:var(--ink);font-weight:500}
+.hero-stats{display:flex;gap:3rem;margin-top:3rem}
+.stat-block .num{font-family:var(--display);font-size:48px;color:var(--ink);line-height:1}
+.stat-block .num span{color:var(--accent)}
+.stat-block .lbl{font-size:12px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-top:4px}
+.hero-cta{display:flex;gap:12px;margin-top:3rem}
+.btn-primary{background:var(--accent);color:#fff;padding:12px 28px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;font-weight:500;border:none;cursor:pointer;transition:background 0.2s}
+.btn-primary:hover{background:var(--accent2)}
+.btn-outline{background:transparent;color:var(--ink);padding:12px 28px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;font-weight:500;border:1.5px solid var(--border2);cursor:pointer;transition:border-color 0.2s,color 0.2s}
+.btn-outline:hover{border-color:var(--ink);color:var(--ink)}
+
+/* HERO RIGHT - signal viz */
+.hero-right{position:relative;overflow:hidden;background:var(--ink)}
+canvas#heroCanvas{position:absolute;inset:0;width:100%;height:100%}
+.hero-overlay-text{position:absolute;bottom:3rem;left:3rem;right:3rem}
+.hero-overlay-text h2{font-family:var(--display);font-size:32px;color:#fff;margin-bottom:8px;letter-spacing:0.05em}
+.hero-overlay-text p{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6}
+.hero-tags{position:absolute;top:2rem;right:2rem;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.tag{font-family:var(--mono);font-size:10px;padding:5px 12px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);letter-spacing:0.1em;border:1px solid rgba(255,255,255,0.12)}
+
+/* EXPERTISE STRIP */
+.expertise-strip{display:flex;border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow-x:auto}
+.expertise-item{flex:1;min-width:200px;padding:2rem 2.5rem;border-right:1px solid var(--border);transition:background 0.2s;cursor:pointer}
+.expertise-item:last-child{border-right:none}
+.expertise-item:hover{background:var(--surface)}
+.exp-icon{font-size:22px;margin-bottom:12px}
+.exp-title{font-family:var(--display);font-size:22px;letter-spacing:0.03em;color:var(--ink);margin-bottom:6px}
+.exp-sub{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* CROSS-DOMAIN SECTION */
+.cross-domain{padding:5rem 3rem;background:var(--ink);color:#fff}
+.cross-domain-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:4rem}
+.section-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.section-title-lg{font-family:var(--display);font-size:clamp(40px,5vw,64px);line-height:1;letter-spacing:0.03em}
+.section-desc{font-size:14px;color:rgba(255,255,255,0.5);max-width:320px;line-height:1.7}
+.domain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,0.1)}
+.domain-card{background:var(--ink);padding:2.5rem;transition:background 0.2s}
+.domain-card:hover{background:#1a1a1a}
+.domain-origin{font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:0.1em;margin-bottom:8px}
+.domain-title{font-family:var(--display);font-size:24px;letter-spacing:0.03em;color:#fff;margin-bottom:10px}
+.domain-arrow{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:10px;letter-spacing:0.1em}
+.domain-apps{display:flex;flex-wrap:wrap;gap:6px}
+.domain-app{font-size:11px;padding:4px 10px;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.1)}
+
+/* FEATURED PAPER HOME */
+.featured-home{padding:5rem 3rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.featured-home-label{font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.featured-home-title{font-family:var(--display);font-size:clamp(36px,4vw,56px);line-height:1;color:var(--ink);margin-bottom:1.5rem}
+.featured-home-body{font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:2rem}
+.featured-mini-card{background:var(--surface);border:1px solid var(--border);padding:2rem;position:relative}
+.featured-mini-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+
+/* SKILLS SECTION ON HOME */
+.skills-home{padding:4rem 3rem;background:var(--surface2);border-top:1px solid var(--border)}
+.skills-home-inner{display:grid;grid-template-columns:1fr 2fr;gap:4rem}
+.skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.skill-tag{font-family:var(--mono);font-size:11px;padding:8px 14px;border:1px solid var(--border);color:var(--ink2);letter-spacing:0.05em;transition:all 0.2s;cursor:default}
+.skill-tag:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+.skill-tag.accent{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* ===== RESEARCH PAGE ===== */
+.research-header{padding:4rem 3rem 3rem;border-bottom:1px solid var(--border)}
+.research-header h1{font-family:var(--display);font-size:clamp(48px,6vw,80px);line-height:1;letter-spacing:0.03em;margin-bottom:1rem}
+.research-header p{font-size:15px;color:var(--muted);max-width:600px;line-height:1.7}
+.papers-list{padding:3rem}
+.paper-item{display:grid;grid-template-columns:80px 1fr auto;gap:2rem;align-items:start;padding:2rem 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.2s}
+.paper-item:hover{background:var(--surface);margin:0 -3rem;padding:2rem 3rem}
+.paper-year{font-family:var(--display);font-size:36px;color:var(--border2);letter-spacing:0.02em;padding-top:4px}
+.paper-body{}
+.paper-title{font-family:var(--display);font-size:22px;letter-spacing:0.02em;color:var(--ink);margin-bottom:6px;line-height:1.2}
+.paper-meta{font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:0.1em;margin-bottom:8px}
+.paper-abstract{font-size:13px;color:var(--muted);line-height:1.7;max-width:700px}
+.paper-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ptag{font-size:10px;padding:3px 10px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);letter-spacing:0.05em}
+.ptag.highlight{background:var(--accent);color:#fff;border-color:var(--accent)}
+.paper-venue{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:right;padding-top:4px;white-space:nowrap}
+
+/* ===== SKILLS PAGE ===== */
+.skills-page{padding:4rem 3rem}
+.skills-page h1{font-family:var(--display);font-size:clamp(48px,6vw,80px);letter-spacing:0.03em;margin-bottom:3rem;line-height:1}
+.skills-tiers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2rem;margin-bottom:4rem}
+.skill-tier-card{background:var(--surface);border:1px solid var(--border);padding:2rem}
+.skill-tier-title{font-family:var(--display);font-size:24px;letter-spacing:0.03em;color:var(--ink);margin-bottom:4px}
+.skill-tier-sub{font-size:11px;color:var(--muted);margin-bottom:1.5rem;font-family:var(--mono);letter-spacing:0.08em}
+.skill-list{display:flex;flex-direction:column;gap:12px}
+.skill-row{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.skill-name{color:var(--ink2)}
+.skill-bar-wrap{width:120px;height:3px;background:var(--border)}
+.skill-bar{height:100%;background:var(--accent);transition:width 1.2s ease}
+.skill-level{font-family:var(--mono);font-size:10px;color:var(--muted);min-width:24px;text-align:right}
+
+/* INTERACTIVE DEMO SECTION */
+.demo-section{background:var(--ink);color:#fff;padding:4rem 3rem}
+.demo-section h2{font-family:var(--display);font-size:clamp(36px,4vw,52px);letter-spacing:0.03em;margin-bottom:8px}
+.demo-section .sub{font-size:14px;color:rgba(255,255,255,0.4);margin-bottom:3rem;line-height:1.7}
+.demos-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.demo-card{background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);padding:2rem;cursor:pointer;transition:border-color 0.2s}
+.demo-card:hover{border-color:var(--accent)}
+.demo-card h3{font-family:var(--display);font-size:22px;letter-spacing:0.03em;color:#fff;margin-bottom:8px}
+.demo-card p{font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6;margin-bottom:1.5rem}
+.demo-canvas-wrap{border-radius:2px;overflow:hidden}
+.demo-play{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:0.1em;margin-top:1rem;cursor:pointer}
+
+/* DTW DEMO */
+.dtw-demo{padding:1rem;background:#111;border-radius:2px}
+canvas.dtw-canvas{width:100%;height:100px;display:block}
+
+/* ===== ABOUT PAGE ===== */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 60px)}
+.about-left{padding:5rem 3rem;border-right:1px solid var(--border)}
+.about-left h1{font-family:var(--display);font-size:clamp(56px,7vw,90px);letter-spacing:0.03em;line-height:0.9;margin-bottom:3rem}
+.about-para{font-size:15px;color:var(--muted);line-height:1.9;margin-bottom:1.5rem}
+.about-para strong{color:var(--ink)}
+.about-right{padding:5rem 3rem;background:var(--surface)}
+.timeline{position:relative;padding-left:2rem}
+.timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border)}
+.tl-item{position:relative;margin-bottom:2.5rem}
+.tl-item::before{content:'';position:absolute;left:-2rem;top:6px;width:8px;height:8px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}
+.tl-date{font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:0.1em;margin-bottom:4px}
+.tl-title{font-weight:500;font-size:15px;color:var(--ink);margin-bottom:2px}
+.tl-org{font-size:13px;color:var(--muted)}
+.contact-strip{padding:3rem;background:var(--ink);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.contact-strip h2{font-family:var(--display);font-size:36px;color:#fff;letter-spacing:0.03em}
+.contact-links{display:flex;gap:16px;flex-wrap:wrap}
+.contact-link{font-family:var(--mono);font-size:11px;padding:10px 20px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);cursor:pointer;transition:all 0.2s;text-decoration:none}
+.contact-link:hover{background:#fff;color:var(--ink)}
+
+/* ===== INTERACTIVE PAGE ===== */
+.interactive-page{padding:4rem 3rem}
+.interactive-page h1{font-family:var(--display);font-size:clamp(48px,6vw,80px);letter-spacing:0.03em;margin-bottom:8px;line-height:1}
+.interactive-page .sub{font-size:14px;color:var(--muted);max-width:600px;line-height:1.7;margin-bottom:3rem}
+.int-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:3rem}
+.int-tab{padding:12px 24px;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;background:none;border-left:none;border-right:none;border-top:none}
+.int-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.int-panel{display:none}
+.int-panel.active{display:block}
+
+/* DTW Interactive */
+.dtw-interactive{background:var(--surface);border:1px solid var(--border);padding:2rem}
+.dtw-controls{display:flex;gap:2rem;margin-bottom:2rem;flex-wrap:wrap}
+.ctrl{display:flex;flex-direction:column;gap:6px}
+.ctrl label{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-family:var(--mono)}
+.ctrl input[type=range]{width:180px;accent-color:var(--accent)}
+.ctrl-val{font-family:var(--mono);font-size:12px;color:var(--accent)}
+canvas#dtwMainCanvas{width:100%;height:200px;display:block;background:#fafaf8;border:1px solid var(--border)}
+
+/* Inertia Interactive */
+.inertia-int{background:var(--surface);border:1px solid var(--border);padding:2rem}
+canvas#inertiaMainCanvas{width:100%;height:200px;display:block;background:#0d0d0d;border:1px solid var(--border)}
+.regime-row{display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap}
+.rg-badge{padding:8px 18px;font-size:12px;font-weight:500;letter-spacing:0.06em;border:1.5px solid var(--border);cursor:pointer;transition:all 0.2s}
+.rg-badge.locked-active{background:#1a7c6b;color:#fff;border-color:#1a7c6b}
+.rg-badge.stabilizing-active{background:#b8860b;color:#fff;border-color:#b8860b}
+.rg-badge.shifting-active{background:#c94a1a;color:#fff;border-color:#c94a1a}
+
+/* DyCoM viz */
+.dycom-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-top:1rem}
+.dycom-op{background:var(--surface);padding:1.5rem 1rem;text-align:center;cursor:pointer;transition:background 0.2s}
+.dycom-op:hover{background:var(--ink);color:#fff}
+.dycom-op:hover .dycom-op-title{color:#fff}
+.dycom-op:hover .dycom-op-sub{color:rgba(255,255,255,0.5)}
+.dycom-op-icon{font-size:24px;margin-bottom:8px}
+.dycom-op-title{font-family:var(--display);font-size:18px;letter-spacing:0.03em;color:var(--ink);margin-bottom:4px}
+.dycom-op-sub{font-size:11px;color:var(--muted);line-height:1.4}
+.dycom-output{background:var(--surface2);border:1px solid var(--border);padding:1.5rem;margin-top:1rem;font-size:13px;color:var(--ink2);line-height:1.7;font-family:var(--mono);min-height:80px}
+
+/* SCROLL ANIMATION */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity 0.6s ease,transform 0.6s ease}
+.reveal.visible{opacity:1;transform:none}
+
+/* TICKER */
+.ticker-wrap{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--ink);padding:12px 0}
+.ticker{display:flex;gap:0;white-space:nowrap;animation:ticker 40s linear infinite}
+.ticker-item{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:0.1em;padding:0 3rem}
+.ticker-item span{color:var(--accent)}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* Footer */
+footer{background:var(--ink);padding:3rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;border-top:1px solid rgba(255,255,255,0.05)}
+footer p{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:0.05em}
+.footer-links{display:flex;gap:20px}
+.footer-links a{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.4);text-decoration:none;letter-spacing:0.08em;cursor:pointer}
+.footer-links a:hover{color:var(--accent)}
+
+/* MOBILE */
+@media(max-width:768px){
+  nav{padding:0 1.5rem}
+  .nav-tabs{display:none}
+  .hero{grid-template-columns:1fr}
+  .hero-right{height:40vh}
+  .hero-left{padding:3rem 1.5rem}
+  .domain-grid{grid-template-columns:1fr}
+  .featured-home{grid-template-columns:1fr;padding:3rem 1.5rem}
+  .about-grid{grid-template-columns:1fr}
+  .skills-tiers{grid-template-columns:1fr}
+  .demos-grid{grid-template-columns:1fr}
+  .papers-list{padding:1.5rem}
+  .paper-item{grid-template-columns:1fr;gap:0.5rem}
+  .paper-year{font-size:24px}
+}
+</style>
+
+</head>
+<body>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<nav>
+  <div class="nav-logo">SIR<span>-</span>LORD<span style="color:var(--ink)"> WIAFE</span></div>
+  <div class="nav-tabs">
+    <a class="nav-tab" href="index.html">Home</a>
+    <a class="nav-tab" href="research.html">Research</a>
+    <a class="nav-tab" href="skills.html">Skills</a>
+    <a class="nav-tab active" href="interactive.html">Interactive</a>
+    <a class="nav-tab" href="about.html">About</a>
+  </div>
+  <div class="nav-right">
+    <span class="nav-cite">60 Citations</span>
+    <span class="nav-badge">Hiring</span>
+  </div>
+</nav>
+<div style="padding-top:60px">
+<div class="interactive-page">
+    <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:12px">Live Demos</div>
+    <h1>Interactive<br><span style="color:var(--accent)">Demos</span></h1>
+    <p class="sub">Explore my core algorithms in action. Adjust parameters and see how the systems behave in real time. These are the actual mathematical operations behind my papers.</p>
+
+    <div class="int-tabs">
+      <button class="int-tab active" onclick="showIntTab('inertia',this)">Functional Inertia</button>
+      <button class="int-tab" onclick="showIntTab('dtw',this)">Nonlinear Signal Alignment</button>
+      <button class="int-tab" onclick="showIntTab('dycom',this)">DyCoM Operators</button>
+    </div>
+
+    <!-- DTW -->
+    <div class="int-panel" id="intpanel-dtw">
+      <div class="dtw-interactive">
+        <h3 style="font-family:var(--display);font-size:28px;letter-spacing:0.03em;margin-bottom:6px">Temporal Elasticity</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;line-height:1.6">Two signals coupling at different temporal resolutions. The DTW alignment path reveals <strong>nonlinear stretching and shrinking</strong> between them. Warp Quantification Analysis (WQA) formalizes this into a suite of path-based metrics — each capturing a geometrically distinct dimension of how two signals relate across time. Alignment lines are cost-colored: <span style="color:#1a7c6b;font-weight:500">green</span> = well-aligned, <span style="color:#b8860b;font-weight:500">amber</span> = moderate warp, <span style="color:#c94a1a;font-weight:500">red</span> = high distortion.</p>
+        <div class="dtw-controls">
+          <div class="ctrl"><label>Signal A Frequency</label><div style="display:flex;align-items:center;gap:10px"><input type="range" id="dtw-freqA" min="1" max="8" step="0.1" value="3"><span class="ctrl-val" id="dtw-freqA-val">3.0</span></div></div>
+          <div class="ctrl"><label>Signal B Frequency</label><div style="display:flex;align-items:center;gap:10px"><input type="range" id="dtw-freqB" min="1" max="8" step="0.1" value="2"><span class="ctrl-val" id="dtw-freqB-val">2.0</span></div></div>
+          <div class="ctrl"><label>Time Dilation</label><div style="display:flex;align-items:center;gap:10px"><input type="range" id="dtw-dil" min="0" max="2" step="0.05" value="0.5"><span class="ctrl-val" id="dtw-dil-val">0.50</span></div></div>
+          <div class="ctrl"><label>Noise Level</label><div style="display:flex;align-items:center;gap:10px"><input type="range" id="dtw-noise" min="0" max="1" step="0.05" value="0.1"><span class="ctrl-val" id="dtw-noise-val">0.10</span></div></div>
+        </div>
+        <canvas id="dtwMainCanvas" height="200"></canvas>
+        <div id="dtw-elasticity-readout" style="margin-top:1rem;font-family:var(--mono);font-size:12px;padding:1rem;background:var(--surface2);border:1px solid var(--border);display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem">
+          <div><span style="color:var(--muted);font-size:10px;display:block;margin-bottom:3px">ALIGNMENT COST</span><span id="wqa-dtw" style="color:var(--accent);font-weight:500;font-size:15px">—</span><div style="font-size:10px;color:var(--muted);margin-top:3px">Total cumulative DTW path cost</div></div>
+          <div><span style="color:var(--muted);font-size:10px;display:block;margin-bottom:3px">WARP DEVIATION VARIANCE (WDV)</span><span id="wqa-wdv" style="color:var(--teal);font-weight:500;font-size:15px">—</span><div style="font-size:10px;color:var(--muted);margin-top:3px">Spread of warp steps around median</div></div>
+          <div><span style="color:var(--muted);font-size:10px;display:block;margin-bottom:3px">PATH LENGTH RATIO (PLR)</span><span id="wqa-plr" style="color:var(--gold);font-weight:500;font-size:15px">—</span><div style="font-size:10px;color:var(--muted);margin-top:3px">Actual path length vs diagonal baseline</div></div>
+          <div><span style="color:var(--muted);font-size:10px;display:block;margin-bottom:3px">DIAGONAL CROSSING RATE (DCR)</span><span id="wqa-dcr" style="color:var(--blue);font-weight:500;font-size:15px">—</span><div style="font-size:10px;color:var(--muted);margin-top:3px">Frequency of path direction reversals</div></div>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin-top:1rem;line-height:1.6"><strong>Published in:</strong> Imaging Neuroscience (MIT Press) 2024 — "Warp Elasticity" &nbsp;·&nbsp; ICASSP 2026 — "Warp Quantification Analysis: A Framework for Path-Based Signal Alignment Metrics"</p>
+      </div>
+    </div>
+
+    <!-- INERTIA -->
+    <div class="int-panel active" id="intpanel-inertia">
+      <div class="inertia-int" style="background:var(--ink);padding:2rem;border-radius:2px">
+        <h3 style="font-family:var(--display);font-size:28px;letter-spacing:0.03em;margin-bottom:6px;color:#fff">Functional Inertia — Accumulating State System</h3>
+        <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:1.5rem;line-height:1.6">Watch a system that <strong style="color:#fff">accumulates its own history</strong>. The <span style="color:#c94a1a">red dot</span> is the raw input — an external force. The <span style="color:#4ecdc4">teal dot</span> is the latent state shaped by accumulated history. The <span style="color:#ffa94d">amber trail</span> is its memory. Select a regime to see how inertia governs the dynamics — or let them all play out. The <strong style="color:#1a7c6b">safe zone</strong> is where the system stabilizes; the <strong style="color:#c94a1a">danger zone</strong> is where it disperses. The FII trace shows sign: <strong style="color:#4ecdc4">≈0 = locked</strong>, <strong style="color:#b8860b">positive = stabilizing</strong>, <strong style="color:#c94a1a">negative = shifting</strong>.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1.5rem">
+          <button id="fi-btn-locked"      onclick="setFiMode('locked')"      style="padding:10px 20px;font-size:12px;font-weight:500;letter-spacing:0.06em;border:2px solid #4ecdc4;background:transparent;color:#4ecdc4;cursor:pointer;transition:all 0.2s">◉ LOCKED</button>
+          <button id="fi-btn-stabilizing" onclick="setFiMode('stabilizing')" style="padding:10px 20px;font-size:12px;font-weight:500;letter-spacing:0.06em;border:2px solid #b8860b;background:transparent;color:#b8860b;cursor:pointer;transition:all 0.2s">◎ STABILIZING</button>
+          <button id="fi-btn-shifting"    onclick="setFiMode('shifting')"    style="padding:10px 20px;font-size:12px;font-weight:500;letter-spacing:0.06em;border:2px solid #c94a1a;background:transparent;color:#c94a1a;cursor:pointer;transition:all 0.2s">○ SHIFTING</button>
+          <button id="fi-btn-all"         onclick="setFiMode('all')"         style="padding:10px 20px;font-size:12px;font-weight:500;letter-spacing:0.06em;border:2px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);cursor:pointer;transition:all 0.2s">⟳ ALL DYNAMICS</button>
+        </div>
+        <canvas id="inertiaMainCanvas" width="900" height="320" style="width:100%;height:320px;display:block;background:#0a0a0f;border:1px solid rgba(255,255,255,0.08)"></canvas>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-top:1rem">
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);padding:1rem">
+            <div style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:4px">CURRENT REGIME</div>
+            <div id="fi-regime-display" style="font-family:var(--display);font-size:22px;letter-spacing:0.03em;color:#4ecdc4">—</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);padding:1rem">
+            <div style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:4px">FIIM (global inertia)</div>
+            <div id="fi-fiim-display" style="font-family:var(--display);font-size:22px;letter-spacing:0.03em;color:#ffa94d">—</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);padding:1rem">
+            <div style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:4px">FII (current)</div>
+            <div id="fi-fii-display" style="font-family:var(--display);font-size:22px;letter-spacing:0.03em;color:#c94a1a">—</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);padding:1rem">
+            <div style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:4px">MODE</div>
+            <div id="fi-interp-display" style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.4;margin-top:2px">—</div>
+          </div>
+        </div>
+        <p style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:1rem;line-height:1.6"><strong style="color:rgba(255,255,255,0.5)">Published in:</strong> Preprint 2026 — "Functional Inertia Reveals History-Dependent Organization of Large-Scale Brain Dynamics"</p>
+      </div>
+    </div>
+
+    <!-- DYCOM -->
+    <div class="int-panel" id="intpanel-dycom">
+      <div style="background:var(--surface);border:1px solid var(--border);padding:2rem">
+        <h3 style="font-family:var(--display);font-size:28px;letter-spacing:0.03em;margin-bottom:6px">DyCoM — Build Your Own Estimator</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:1.5rem;line-height:1.6">Two live signals run below. For each of DyCoM's 4 operators, pick a configuration — then watch the <strong>output signal update in real time</strong> as the composition changes. Every classic connectivity method (SWPC, phase synchrony, FBC) is just a specific set of choices through these four operators.</p>
+
+        <canvas id="dycomSignalCanvas" height="120" style="width:100%;height:120px;display:block;background:#fafaf8;border:1px solid var(--border);margin-bottom:1.5rem"></canvas>
+
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-bottom:1.5rem">
+
+          <div style="background:var(--surface2);padding:1.2rem">
+            <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.12em;color:var(--accent);margin-bottom:8px">𝓡 REPRESENTATION</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer"><input type="radio" name="repr" value="identity" checked onchange="dycomUpdate()"> Identity</label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer"><input type="radio" name="repr" value="zscore" onchange="dycomUpdate()"> Local z-score</label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer"><input type="radio" name="repr" value="phase" onchange="dycomUpdate()"> Phase (CVPS)</label>
+            </div>
+          </div>
+
+          <div style="background:var(--surface2);padding:1.2rem">
+            <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.12em;color:var(--teal);margin-bottom:8px">ε ENERGY MAP</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer"><input type="radio" name="energy" value="product" checked onchange="dycomUpdate()"> Product</label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer"><input type="radio" name="energy" value="synchrony" onchange="dycomUpdate()"> Synchrony (Δφ)</label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer"><input type="radio" name="energy" value="power" onchange="dycomUpdate()"> Squared power</label>
+            </div>
+          </div>
+
+          <div style="background:var(--surface2);padding:1.2rem">
+            <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.12em;color:var(--gold);margin-bottom:8px">∫ TEMPORAL INTEGRATION</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer"><input type="radio" name="integ" value="rect" checked onchange="dycomUpdate()"> Rect. window (W=40)</label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer"><input type="radio" name="integ" value="cumulative" onchange="dycomUpdate()"> Cumulative mean</label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer"><input type="radio" name="integ" value="instant" onchange="dycomUpdate()"> Instantaneous</label>
+            </div>
+          </div>
+
+          <div style="background:var(--surface2);padding:1.2rem">
+            <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.12em;color:var(--blue);margin-bottom:8px">𝒩 NORMALIZATION</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer"><input type="radio" name="norm" value="none" onchange="dycomUpdate()"> None</label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer"><input type="radio" name="norm" value="variance" checked onchange="dycomUpdate()"> Variance norm.</label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer"><input type="radio" name="norm" value="abs" onchange="dycomUpdate()"> Absolute value</label>
+            </div>
+          </div>
+
+        </div>
+
+        <canvas id="dycomOutputCanvas" height="120" style="width:100%;height:120px;display:block;background:#0d0d0d;border:1px solid var(--border);margin-bottom:1rem"></canvas>
+
+        <div id="dycom-estimator-label" style="font-family:var(--mono);font-size:11px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);color:var(--accent);letter-spacing:0.05em;margin-bottom:1rem">→ Estimator: Sliding Window Pearson Correlation (SWPC)</div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">
+          <button style="font-size:11px;padding:7px 14px;background:var(--accent);color:#fff;border:none;cursor:pointer;letter-spacing:0.05em" onclick="dycomSetPreset('swpc')">SWPC preset</button>
+          <button style="font-size:11px;padding:7px 14px;background:transparent;border:1px solid var(--teal);color:var(--teal);cursor:pointer;letter-spacing:0.05em" onclick="dycomSetPreset('cvps')">CVPS preset</button>
+          <button style="font-size:11px;padding:7px 14px;background:transparent;border:1px solid var(--border);cursor:pointer;letter-spacing:0.05em" onclick="dycomSetPreset('fbc')">FBC preset</button>
+          <button style="font-size:11px;padding:7px 14px;background:transparent;border:1px solid var(--border);cursor:pointer;letter-spacing:0.05em" onclick="dycomSetPreset('issm')">ISSM preset</button>
+        </div>
+
+        <p style="font-size:12px;color:var(--muted);line-height:1.6"><strong>Published in:</strong> bioRxiv 2026 — "Dynamic Co-Modulation (DyCoM): A Unified Operator Framework for Dynamic Connectivity in Neuroimaging"</p>
+      </div>
+    </div>
+
+    </div>
+</div>
+<script>
+// CURSOR
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px'; cur.style.top = e.clientY + 'px';
+  setTimeout(() => { ring.style.left = e.clientX + 'px'; ring.style.top = e.clientY + 'px'; }, 60);
+});
+document.querySelectorAll('button,a,.paper-item,.expertise-item,.domain-card,.skill-tag').forEach(el => {
+  el.addEventListener('mouseenter', () => { ring.style.width='48px'; ring.style.height='48px'; ring.style.borderColor='#c94a1a'; });
+  el.addEventListener('mouseleave', () => { ring.style.width='32px'; ring.style.height='32px'; ring.style.borderColor='#c94a1a'; });
+});
+
+// REVEAL ON SCROLL
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+<script>
+const _anims = {};
+function killAllDemos() {
+  ['dtwAnim','inertiaAnim','dycomSigAnim','phaseAnim'].forEach(k => {
+    if (typeof window[k] !== 'undefined' && window[k]) { cancelAnimationFrame(window[k]); window[k] = null; }
+  });
+}
+
+function startDemo(id) {
+  killAllDemos();
+  if (id === 'dtw')     initDTW();
+  if (id === 'inertia') initInertia();
+  if (id === 'dycom')   initDyCoM();
+}
+
+function showIntTab(id, tabEl) {
+  document.querySelectorAll('.int-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.int-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('intpanel-' + id).classList.add('active');
+  tabEl.classList.add('active');
+  startDemo(id);
+}
+
+// ============ DTW INTERACTIVE ============
+let dtwAnim;
+function initDTW() {
+  if (dtwAnim) cancelAnimationFrame(dtwAnim);
+  const canvas = document.getElementById('dtwMainCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth; canvas.height = 200;
+  ['dtw-freqA','dtw-freqB','dtw-dil','dtw-noise'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.oninput = () => { const v = document.getElementById(id+'-val'); if(v) v.textContent = parseFloat(el.value).toFixed(2); };
+  });
+  let t = 0;
+  function draw() {
+    const W = canvas.width, H = canvas.height;
+    const fA  = parseFloat(document.getElementById('dtw-freqA').value);
+    const fB  = parseFloat(document.getElementById('dtw-freqB').value);
+    const dil = parseFloat(document.getElementById('dtw-dil').value);
+    const nz  = parseFloat(document.getElementById('dtw-noise').value);
+    ctx.fillStyle = '#fafaf8'; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle = '#e5e0d5'; ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(0,H/2); ctx.lineTo(W,H/2); ctx.stroke();
+    const N = W;
+    const sA=[], sB=[];
+    for (let i=0;i<N;i++) {
+      const x = i/N;
+      sA.push(Math.sin(x*Math.PI*2*fA+t)*0.35 + (Math.random()-0.5)*nz*0.3);
+      const w = x + dil*0.2*Math.sin(x*Math.PI*4);
+      sB.push(Math.sin(w*Math.PI*2*fB+t*0.8)*0.35 + (Math.random()-0.5)*nz*0.3);
+    }
+    // Alignment lines — thinner (0.9px) but cost-colored, drawn first (behind signals)
+    for (let i=0; i<N; i+=22) {
+      const j = Math.min(N-1, Math.round(i*(1+dil*0.18)));
+      const yA = H/2 - sA[i]*H*0.8;
+      const yB = H/2 - sB[j]*H*0.8;
+      const dist = Math.abs(sA[i] - sB[j]);
+      const r = Math.min(255, Math.floor(dist*560));
+      const g = Math.max(0, Math.floor(170 - dist*380));
+      ctx.strokeStyle = `rgba(${r},${g},30,0.55)`;
+      ctx.lineWidth = 0.7;
+      ctx.beginPath(); ctx.moveTo(i,yA); ctx.lineTo(j,yB); ctx.stroke();
+    }
+    // Signals on top — thicker so they clearly dominate
+    [[sA,'#1a7c6b',2.2],[sB,'#c94a1a',2.2]].forEach(([sig,col,lw]) => {
+      ctx.strokeStyle=col; ctx.lineWidth=lw;
+      ctx.beginPath();
+      sig.forEach((v,i)=>{ i===0?ctx.moveTo(i,H/2-v*H*0.8):ctx.lineTo(i,H/2-v*H*0.8); });
+      ctx.stroke();
+    });
+    // WQA metrics
+    const diffs = sA.map((v,i)=>Math.abs(v-(sB[i]||0)));
+    const N2 = diffs.length;
+    // Alignment Cost = mean cumulative DTW path cost
+    const ac = (diffs.reduce((s,v)=>s+v,0)/N2).toFixed(4);
+    // WDV = variance of warp deviations around median (median-based as per WQA paper)
+    const sorted = [...diffs].sort((a,b)=>a-b);
+    const med = sorted[Math.floor(N2/2)];
+    const wdv = Math.sqrt(diffs.reduce((s,v)=>s+(v-med)**2,0)/N2).toFixed(4);
+    // PLR = path length ratio: actual warped path length vs straight diagonal
+    let pathLen = 0;
+    for (let k=1;k<N2;k++) pathLen += Math.sqrt(1+(diffs[k]-diffs[k-1])**2);
+    const plr = (pathLen/N2).toFixed(3);
+    // DCR = diagonal crossing rate: fraction of transitions where path direction reverses
+    // Dwell threshold = 3 (from WQA paper: runs shorter than threshold count as crossings)
+    const DWELL_THRESH = 3;
+    let crossings = 0, dwellCount = 1;
+    for (let k=1;k<N2;k++) {
+      const step = diffs[k]-diffs[k-1];
+      if (Math.abs(step) < 0.004) { dwellCount++; }
+      else { if (dwellCount < DWELL_THRESH) crossings++; dwellCount = 1; }
+    }
+    const dcr = (crossings / N2).toFixed(4);
+    const e1=document.getElementById('wqa-dtw'), e2=document.getElementById('wqa-wdv'),
+          e3=document.getElementById('wqa-plr'), e4=document.getElementById('wqa-dcr');
+    if(e1) e1.textContent = ac;
+    if(e2) e2.textContent = wdv;
+    if(e3) e3.textContent = plr;
+    if(e4) e4.textContent = dcr;
+    ctx.font='11px JetBrains Mono,monospace';
+    ctx.fillStyle='#1a7c6b'; ctx.fillText('Signal A',12,20);
+    ctx.fillStyle='#c94a1a'; ctx.fillText('Signal B',80,20);
+    ctx.fillStyle='#6b6460'; ctx.fillText('Alignment paths (cost-colored)',158,20);
+    t+=0.03;
+    dtwAnim = requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// ============ INERTIA INTERACTIVE ============
+let inertiaAnim;
+let fiMode    = 'all';
+let fiModeTimer = 0;
+let fiModeSeg   = 'locked';
+const FI_SEG_LEN = 260;   // ~4 s @ 60 fps
+
+window.setFiMode = function(mode) {
+  fiMode = mode;
+  fiModeTimer = 0;
+  if (mode !== 'all') fiModeSeg = mode;
+  const colors = { locked:'#4ecdc4', stabilizing:'#b8860b', shifting:'#c94a1a', all:'rgba(255,255,255,0.8)' };
+  ['locked','stabilizing','shifting','all'].forEach(m => {
+    const btn = document.getElementById('fi-btn-' + m);
+    if (!btn) return;
+    if (m === mode) { btn.style.background = colors[m]; btn.style.color = '#0d0d0d'; }
+    else            { btn.style.background = 'transparent'; btn.style.color = colors[m]; }
+  });
+};
+
+function initInertia() {
+  if (inertiaAnim) cancelAnimationFrame(inertiaAnim);
+  const canvas = document.getElementById('inertiaMainCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth; canvas.height = 320;
+
+  setFiMode('all');
+
+  // ── PHYSICS CONSTANTS ────────────────────────────────────────────────────
+  // The key insight: stabilizing and shifting share the SAME alpha (history weight).
+  // What differs is ONLY the perturbation direction — inward vs outward.
+  const ALPHA_LOCKED = 0.97;   // history dominates — ball barely moves
+  const ALPHA_FREE   = 0.82;   // same for BOTH stabilizing and shifting
+  const PERTURB_LOCKED = 0.006;  // tiny nudge — history always wins
+  const PERTURB_FREE   = 0.038;  // strong enough to overcome history
+
+  // Ball state
+  let bx = 0.5, by = 0.5;   // latent position [0,1]
+  const trail = [];
+  const fiiHistory = [];     // signed FII over time
+
+  let curAlpha   = ALPHA_LOCKED;
+  let curPerturb = PERTURB_LOCKED;
+  let curInward  = false;       // true = stabilizing, false = shifting
+
+  // For smooth transitions
+  let tgtAlpha   = ALPHA_LOCKED;
+  let tgtPerturb = PERTURB_LOCKED;
+
+  const ALL_SEQ = ['locked', 'stabilizing', 'shifting'];
+  let allSeqIdx = 0;
+
+  let angle = 0;  // orbiting angle for perturbation source
+
+  function draw() {
+    const W = canvas.width, H = canvas.height;
+    const topH = 210, botH = H - topH;
+    const cx = W / 2, cy = topH / 2;
+    const SAFE_R   = Math.min(W, topH) * 0.18;  // inner attractor basin
+    const DANGER_R = Math.min(W, topH) * 0.40;  // outer dispersal ring
+
+    // ── ADVANCE AUTO-CYCLE ────────────────────────────────────────────────
+    if (fiMode === 'all') {
+      fiModeTimer++;
+      if (fiModeTimer >= FI_SEG_LEN) {
+        fiModeTimer = 0;
+        allSeqIdx = (allSeqIdx + 1) % ALL_SEQ.length;
+        fiModeSeg = ALL_SEQ[allSeqIdx];
+      }
+    }
+
+    const activeRegime = fiMode === 'all' ? fiModeSeg : fiMode;
+
+    // Set targets based on regime
+    if (activeRegime === 'locked') {
+      tgtAlpha   = ALPHA_LOCKED;
+      tgtPerturb = PERTURB_LOCKED;
+      curInward  = false;
+    } else if (activeRegime === 'stabilizing') {
+      tgtAlpha   = ALPHA_FREE;
+      tgtPerturb = PERTURB_FREE;
+      curInward  = true;
+    } else {  // shifting
+      tgtAlpha   = ALPHA_FREE;
+      tgtPerturb = PERTURB_FREE;
+      curInward  = false;
+    }
+
+    // Smooth lerp toward targets
+    curAlpha   += (tgtAlpha   - curAlpha)   * 0.035;
+    curPerturb += (tgtPerturb - curPerturb) * 0.035;
+
+    // ── COMPUTE PERTURBATION ──────────────────────────────────────────────
+    // Speed: locked is very slow, free regimes orbit faster
+    const orbitSpeed = activeRegime === 'locked' ? 0.007 : 0.020;
+    angle += orbitSpeed;
+
+    // Current ball world-position
+    const bwx = bx * W, bwy = by * topH;
+
+    // Vector from ball to attractor centre
+    const toCx = cx - bwx, toCy = cy - bwy;
+    const toDist = Math.sqrt(toCx * toCx + toCy * toCy) || 1;
+
+    // Unit vectors: inward (toward centre) and tangential (perpendicular)
+    const inUnit  = { x: toCx / toDist, y: toCy / toDist };
+    const tanUnit = { x: -inUnit.y,     y: inUnit.x };
+
+    // Perturbation is a mix of radial + tangential so the ball orbits naturally
+    // Stabilizing: radial component POSITIVE (toward centre)
+    // Shifting:    radial component NEGATIVE (away from centre)
+    const radialSign = curInward ? 1 : -1;
+    const radialMix  = 0.55;  // 55% radial, 45% tangential
+    const perturbX = curPerturb * (radialSign * radialMix * inUnit.x + (1 - radialMix) * Math.cos(angle));
+    const perturbY = curPerturb * (radialSign * radialMix * inUnit.y + (1 - radialMix) * Math.sin(angle));
+
+    // ── UPDATE LATENT STATE ───────────────────────────────────────────────
+    const prevBx = bx, prevBy = by;
+    // New state = α * history + (1-α) * (current + perturbation)
+    bx = curAlpha * bx + (1 - curAlpha) * (bx + perturbX);
+    by = curAlpha * by + (1 - curAlpha) * (by + perturbY);
+    // Clamp to canvas
+    bx = Math.max(0.02, Math.min(0.98, bx));
+    by = Math.max(0.02, Math.min(0.98, by));
+
+    // ── SIGNED FII ────────────────────────────────────────────────────────
+    const disp = Math.sqrt((bx - prevBx) ** 2 + (by - prevBy) ** 2);
+    // Sign: positive if moving toward centre, negative if away
+    const moveX = bx - prevBx, moveY = by - prevBy;
+    const dotInward = moveX * inUnit.x + moveY * inUnit.y;
+    const signedFii = (dotInward >= 0 ? 1 : -1) * disp * 300;
+
+    trail.push({ x: bx, y: by });
+    if (trail.length > 220) trail.shift();
+    fiiHistory.push(signedFii);
+    if (fiiHistory.length > W) fiiHistory.shift();
+
+    // ── DRAW PHASE SPACE ─────────────────────────────────────────────────
+    ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, W, topH);
+
+    // Grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.03)'; ctx.lineWidth = 0.5;
+    for (let gx = 0; gx <= W; gx += W / 8)       { ctx.beginPath(); ctx.moveTo(gx, 0);    ctx.lineTo(gx, topH); ctx.stroke(); }
+    for (let gy = 0; gy <= topH; gy += topH / 6)  { ctx.beginPath(); ctx.moveTo(0, gy);    ctx.lineTo(W, gy);    ctx.stroke(); }
+
+    // Danger zone (outer ring)
+    ctx.beginPath(); ctx.arc(cx, cy, DANGER_R, 0, Math.PI * 2);
+    ctx.fillStyle   = 'rgba(201,74,26,0.05)'; ctx.fill();
+    ctx.strokeStyle = 'rgba(201,74,26,0.18)'; ctx.lineWidth = 1; ctx.stroke();
+
+    // Safe zone (inner basin)
+    ctx.beginPath(); ctx.arc(cx, cy, SAFE_R, 0, Math.PI * 2);
+    ctx.fillStyle   = 'rgba(78,205,196,0.07)'; ctx.fill();
+    ctx.strokeStyle = 'rgba(78,205,196,0.25)'; ctx.lineWidth = 1; ctx.stroke();
+
+    // Attractor glow at centre
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, SAFE_R * 0.6);
+    grad.addColorStop(0, 'rgba(78,205,196,0.22)');
+    grad.addColorStop(1, 'rgba(78,205,196,0)');
+    ctx.beginPath(); ctx.arc(cx, cy, SAFE_R * 0.6, 0, Math.PI * 2);
+    ctx.fillStyle = grad; ctx.fill();
+
+    // Zone labels
+    ctx.font = '9px JetBrains Mono, monospace';
+    ctx.fillStyle = 'rgba(78,205,196,0.5)';  ctx.fillText('SAFE',   cx - 14, cy + 4);
+    ctx.fillStyle = 'rgba(201,74,26,0.45)';  ctx.fillText('DANGER', cx + DANGER_R - 52, cy - DANGER_R + 14);
+
+    // Trail — amber, fades with age, thickens toward present
+    for (let i = 1; i < trail.length; i++) {
+      const age = i / trail.length;
+      ctx.strokeStyle = `rgba(255,169,77,${age * 0.65})`;
+      ctx.lineWidth   = age * 2.5;
+      ctx.beginPath();
+      ctx.moveTo(trail[i-1].x * W, trail[i-1].y * topH);
+      ctx.lineTo(trail[i].x   * W, trail[i].y   * topH);
+      ctx.stroke();
+    }
+
+    // Perturbation arrow — shows direction of current push
+    const arrowX = bwx + perturbX * W * 8;
+    const arrowY = bwy + perturbY * topH * 8;
+    const arrowColor = curInward ? '#4ecdc4' : '#c94a1a';
+    ctx.strokeStyle = arrowColor + 'aa'; ctx.lineWidth = 1.5;
+    ctx.setLineDash([3, 5]);
+    ctx.beginPath(); ctx.moveTo(bwx, bwy); ctx.lineTo(arrowX, arrowY); ctx.stroke();
+    ctx.setLineDash([]);
+    // Arrowhead
+    const adx = arrowX - bwx, ady = arrowY - bwy;
+    const alen = Math.sqrt(adx*adx + ady*ady) || 1;
+    const ax = arrowX, ay = arrowY;
+    const nx = adx/alen, ny = ady/alen;
+    ctx.fillStyle = arrowColor + 'aa';
+    ctx.beginPath();
+    ctx.moveTo(ax, ay);
+    ctx.lineTo(ax - nx*7 + ny*4, ay - ny*7 - nx*4);
+    ctx.lineTo(ax - nx*7 - ny*4, ay - ny*7 + nx*4);
+    ctx.closePath(); ctx.fill();
+
+    // Ball — color shows whether inside safe zone or danger zone
+    const ballDist = Math.sqrt((bwx - cx)**2 + (bwy - cy)**2);
+    const inSafe   = ballDist < SAFE_R;
+    const inDanger = ballDist > DANGER_R;
+    const ballColor = inSafe ? '#4ecdc4' : inDanger ? '#c94a1a' : '#ffa94d';
+
+    ctx.beginPath(); ctx.arc(bwx, bwy, 9, 0, Math.PI * 2);
+    ctx.fillStyle   = ballColor; ctx.fill();
+    ctx.strokeStyle = ballColor + '44'; ctx.lineWidth = 5;
+    ctx.beginPath(); ctx.arc(bwx, bwy, 14, 0, Math.PI * 2); ctx.stroke();
+
+    // Labels
+    ctx.font = '10px JetBrains Mono, monospace';
+    ctx.fillStyle = ballColor;                      ctx.fillText('● System state', 12, 20);
+    ctx.fillStyle = 'rgba(255,169,77,0.7)';         ctx.fillText('● History trail', 140, 20);
+    ctx.fillStyle = arrowColor + 'cc';              ctx.fillText('→ Perturbation', 270, 20);
+    ctx.fillStyle = 'rgba(255,255,255,0.2)';        ctx.fillText(`α = ${curAlpha.toFixed(2)}`, W - 72, 20);
+
+    // ── FII TRACE (signed, auto-scaled) ──────────────────────────────────
+    ctx.fillStyle = '#0a0a12'; ctx.fillRect(0, topH, W, botH);
+
+    const zeroY  = topH + botH / 2;
+    const maxFii = Math.max(...fiiHistory.map(Math.abs), 0.001);
+    const fiiScale = (botH * 0.42) / maxFii;
+
+    // Zero line
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)'; ctx.lineWidth = 0.8;
+    ctx.setLineDash([3, 5]);
+    ctx.beginPath(); ctx.moveTo(0, zeroY); ctx.lineTo(W, zeroY); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Axis labels
+    ctx.font = '8px JetBrains Mono, monospace';
+    ctx.fillStyle = 'rgba(184,134,11,0.5)'; ctx.fillText('+ stabilizing', W - 86, topH + 11);
+    ctx.fillStyle = 'rgba(201,74,26,0.5)';  ctx.fillText('− shifting',    W - 74, topH + botH - 3);
+    ctx.fillStyle = 'rgba(78,205,196,0.5)'; ctx.fillText('≈0 locked',     W - 68, zeroY - 3);
+
+    // FII trace — color per sample
+    ctx.lineWidth = 1.5;
+    for (let i = 1; i < fiiHistory.length; i++) {
+      const v  = fiiHistory[i];
+      const pv = fiiHistory[i - 1];
+      const x0 = ((i - 1) / fiiHistory.length) * W;
+      const x1 = (i       / fiiHistory.length) * W;
+      const y0 = zeroY - pv * fiiScale;
+      const y1 = zeroY - v  * fiiScale;
+      const thresh = maxFii * 0.07;
+      ctx.strokeStyle = Math.abs(v) < thresh ? '#4ecdc4' : v > 0 ? '#b8860b' : '#c94a1a';
+      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+    }
+
+    ctx.font = '9px JetBrains Mono, monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.fillText('FII (signed) →', 8, topH + 11);
+
+    // ── READOUTS ─────────────────────────────────────────────────────────
+    const regime = Math.abs(signedFii) < maxFii * 0.07 ? 'Locked'
+                 : signedFii > 0 ? 'Stabilizing' : 'Shifting';
+    const regimeCol = regime === 'Locked' ? '#4ecdc4' : regime === 'Stabilizing' ? '#b8860b' : '#c94a1a';
+    const fiim = fiiHistory.length > 0 ? fiiHistory.reduce((s,v) => s + Math.abs(v), 0) / fiiHistory.length : 0;
+    const modeLabel = fiMode === 'all' ? `All → ${fiModeSeg}` : fiMode.charAt(0).toUpperCase() + fiMode.slice(1);
+
+    const r1 = document.getElementById('fi-regime-display');
+    const r2 = document.getElementById('fi-fiim-display');
+    const r3 = document.getElementById('fi-fii-display');
+    const r4 = document.getElementById('fi-interp-display');
+    if (r1) { r1.textContent = regime; r1.style.color = regimeCol; }
+    if (r2) r2.textContent = fiim.toFixed(4);
+    if (r3) { r3.textContent = signedFii.toFixed(4); r3.style.color = regimeCol; }
+    if (r4) r4.textContent = modeLabel;
+
+    inertiaAnim = requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+let dycomSigAnim;
+function initDyCoM() {
+  if (dycomSigAnim) cancelAnimationFrame(dycomSigAnim);
+  const sigCanvas = document.getElementById('dycomSignalCanvas');
+  const outCanvas = document.getElementById('dycomOutputCanvas');
+  if (!sigCanvas || !outCanvas) return;
+  const sCtx = sigCanvas.getContext('2d');
+  const oCtx = outCanvas.getContext('2d');
+  sigCanvas.width = sigCanvas.offsetWidth; sigCanvas.height = 120;
+  outCanvas.width = outCanvas.offsetWidth; outCanvas.height = 120;
+
+  let t = 0;
+
+  const estimatorNames = {
+    'identity-product-rect-variance':      'Sliding Window Pearson Correlation (SWPC)',
+    'identity-product-rect-none':          'Sliding Window Covariance',
+    'identity-product-instant-none':       'Instantaneous Co-Activation',
+    'identity-product-instant-variance':   'Instantaneous Correlation',
+    'identity-product-cumulative-none':    'Cumulative Co-Activation (ISSM-style)',
+    'identity-product-cumulative-variance':'Normalized Cumulative Correlation',
+    'zscore-product-rect-variance':        'Adaptive Instantaneous Correlation (aIC)',
+    'zscore-power-rect-variance':          'Standardized Adaptive Power (saIC)',
+    'identity-power-rect-none':            'Filter-Bank Connectivity (FBC)',
+    'phase-synchrony-instant-none':        'Complex-Valued Phase Synchrony (CVPS) — cos(Δφ) & sin(Δφ)',
+    'phase-synchrony-rect-none':           'Windowed CVPS — smoothed cos(Δφ) & sin(Δφ)',
+    'phase-synchrony-cumulative-none':     'Cumulative CVPS — running cos(Δφ) & sin(Δφ)',
+  };
+
+  function getSelections() {
+    const repr   = document.querySelector('input[name="repr"]:checked')?.value   || 'identity';
+    const energy = document.querySelector('input[name="energy"]:checked')?.value || 'product';
+    const integ  = document.querySelector('input[name="integ"]:checked')?.value  || 'rect';
+    const norm   = document.querySelector('input[name="norm"]:checked')?.value   || 'variance';
+    return {repr, energy, integ, norm};
+  }
+
+  // isCVPS: true when repr=phase AND energy=synchrony → dual-signal output
+  function isCVPS(sel) { return sel.repr === 'phase' && sel.energy === 'synchrony'; }
+
+  // Extract instantaneous phase from a real signal and unwrap it
+  // Step 1: estimate phase via atan2 of signal and its quadrature (finite diff)
+  // Step 2: unwrap — remove 2π jumps so phase is a smooth continuous function
+  function extractPhase(sig) {
+    const N = sig.length;
+    // Quadrature approximation: use a quarter-period shifted version
+    // Better approach: use signal and its derivative as (cos,sin) pair
+    const raw = sig.map((v, i) => {
+      const prev = sig[Math.max(i - 1, 0)];
+      const next = sig[Math.min(i + 1, N - 1)];
+      const deriv = (next - prev) / 2;   // central difference ≈ imag part
+      return Math.atan2(deriv, v);
+    });
+    // Unwrap: accumulate phase, removing jumps larger than π
+    const unwrapped = new Array(N);
+    unwrapped[0] = raw[0];
+    for (let i = 1; i < N; i++) {
+      let diff = raw[i] - raw[i - 1];
+      // Wrap diff to (-π, π]
+      while (diff >  Math.PI) diff -= 2 * Math.PI;
+      while (diff < -Math.PI) diff += 2 * Math.PI;
+      unwrapped[i] = unwrapped[i - 1] + diff;
+    }
+    return unwrapped;
+  }
+
+  // Temporal integration helper (works on any array)
+  function integrate(arr, mode) {
+    const N = arr.length;
+    if (mode === 'rect') {
+      const W2 = 40; const out = [];
+      for (let i = 0; i < N; i++) {
+        const lo = Math.max(0, i - W2); let s = 0;
+        for (let k = lo; k <= i; k++) s += arr[k];
+        out.push(s / (i - lo + 1));
+      }
+      return out;
+    } else if (mode === 'cumulative') {
+      let acc = 0; return arr.map((v, i) => { acc += v; return acc / (i + 1); });
+    }
+    return [...arr]; // instantaneous
+  }
+
+  function normalize(arr, mode) {
+    const N = arr.length;
+    if (mode === 'variance') {
+      const m = arr.reduce((s, v) => s + v, 0) / N;
+      const sd = Math.sqrt(arr.reduce((s, v) => s + (v - m) ** 2, 0) / N) || 1;
+      return arr.map(v => (v - m) / sd);
+    } else if (mode === 'abs') {
+      return arr.map(v => Math.abs(v));
+    }
+    return arr;
+  }
+
+  // Returns { dual: bool, out1: [], out2: [] }
+  function computeOutput(sA, sB, sel) {
+    const N = sA.length;
+
+    // ── CVPS path: repr=phase + energy=synchrony ──────────────────────────
+    if (isCVPS(sel)) {
+      const phA = extractPhase(sA);
+      const phB = extractPhase(sB);
+      // Phase difference — wrap to (-π, π] so cos/sin are bounded smooth signals
+      const dPhi = phA.map((v, i) => {
+        let d = v - phB[i];
+        while (d >  Math.PI) d -= 2 * Math.PI;
+        while (d < -Math.PI) d += 2 * Math.PI;
+        return d;
+      });
+      // cos(Δφ): synchrony strength — +1 means in-phase, -1 means anti-phase
+      // sin(Δφ): synchrony direction — sign tells you which signal leads
+      const cosArr = integrate(dPhi.map(v => Math.cos(v)), sel.integ);
+      const sinArr = integrate(dPhi.map(v => Math.sin(v)), sel.integ);
+      return { dual: true, out1: cosArr, out2: sinArr };
+    }
+
+    // ── Standard single-output path ───────────────────────────────────────
+    let rA = [...sA], rB = [...sB];
+    if (sel.repr === 'zscore') {
+      const mA = rA.reduce((s,v)=>s+v,0)/N, mB = rB.reduce((s,v)=>s+v,0)/N;
+      const sdA = Math.sqrt(rA.reduce((s,v)=>s+(v-mA)**2,0)/N)||1;
+      const sdB = Math.sqrt(rB.reduce((s,v)=>s+(v-mB)**2,0)/N)||1;
+      rA = rA.map(v=>(v-mA)/sdA); rB = rB.map(v=>(v-mB)/sdB);
+    }
+    let energy = [];
+    if      (sel.energy === 'product')   energy = rA.map((v,i)=>v*rB[i]);
+    else if (sel.energy === 'synchrony') energy = rA.map((v,i)=>Math.cos(v-rB[i])); // fallback
+    else if (sel.energy === 'power')     energy = rA.map((v,i)=>(v*v+rB[i]*rB[i])/2);
+
+    const integrated = integrate(energy, sel.integ);
+    return { dual: false, out1: normalize(integrated, sel.norm), out2: [] };
+  }
+
+  window.dycomUpdate = function() {
+    const lbl = document.getElementById('dycom-estimator-label');
+    const sel = getSelections();
+    const key = `${sel.repr}-${sel.energy}-${sel.integ}-${sel.norm}`;
+    const name = estimatorNames[key] || 'Custom DyCoM Estimator';
+    if (lbl) lbl.textContent = '→ Estimator: ' + name;
+  };
+
+  window.dycomSetPreset = function(p) {
+    const presets = {
+      swpc:  {repr:'identity', energy:'product',   integ:'rect',       norm:'variance'},
+      cvps:  {repr:'phase',    energy:'synchrony', integ:'instant',    norm:'none'},
+      fbc:   {repr:'identity', energy:'power',     integ:'rect',       norm:'none'},
+      issm:  {repr:'identity', energy:'product',   integ:'cumulative', norm:'none'},
+    };
+    const s = presets[p];
+    if (!s) return;
+    document.querySelector(`input[name="repr"][value="${s.repr}"]`).checked     = true;
+    document.querySelector(`input[name="energy"][value="${s.energy}"]`).checked = true;
+    document.querySelector(`input[name="integ"][value="${s.integ}"]`).checked   = true;
+    document.querySelector(`input[name="norm"][value="${s.norm}"]`).checked     = true;
+    dycomUpdate();
+  };
+
+  function drawSingleOut(oCtx, OW, OH, out, color, label) {
+    const outMax = out.reduce((m,v)=>Math.max(m,Math.abs(v)),1e-9);
+    const scale  = (OH * 0.44) / outMax;
+    oCtx.strokeStyle = color; oCtx.lineWidth = 2;
+    oCtx.beginPath();
+    out.forEach((v,i)=>{ i===0?oCtx.moveTo(i,OH/2-v*scale):oCtx.lineTo(i,OH/2-v*scale); });
+    oCtx.stroke();
+    oCtx.font='9px JetBrains Mono,monospace';
+    oCtx.fillStyle = color + '99';
+    oCtx.fillText(`${label}  max:${outMax.toFixed(3)}`, 10, label.includes('cos') ? 13 : OH-4);
+  }
+
+  function draw() {
+    const W  = sigCanvas.width, H  = sigCanvas.height;
+    const OW = outCanvas.width, OH = outCanvas.height;
+    const N  = W;
+
+    // Generate two signals with a drifting phase relationship
+    const sA=[], sB=[];
+    for (let i=0;i<N;i++) {
+      const x = i/N;
+      sA.push(Math.sin(x*Math.PI*6+t)*0.32 + Math.sin(x*Math.PI*2.5+t*0.7)*0.15);
+      sB.push(Math.sin(x*Math.PI*4+t*1.1+0.8)*0.32 + Math.cos(x*Math.PI*3+t*0.5)*0.12);
+    }
+
+    // ── Draw input signals ──────────────────────────────────────────────────
+    sCtx.fillStyle='#fafaf8'; sCtx.fillRect(0,0,W,H);
+    sCtx.strokeStyle='#e8e3d8'; sCtx.lineWidth=0.5;
+    sCtx.beginPath(); sCtx.moveTo(0,H/2); sCtx.lineTo(W,H/2); sCtx.stroke();
+    [[sA,'#1a4a8c',2],[sB,'#c94a1a',2]].forEach(([sig,col,lw])=>{
+      sCtx.strokeStyle=col; sCtx.lineWidth=lw; sCtx.beginPath();
+      sig.forEach((v,i)=>{ i===0?sCtx.moveTo(i,H/2-v*H*0.75):sCtx.lineTo(i,H/2-v*H*0.75); });
+      sCtx.stroke();
+    });
+    sCtx.font='10px JetBrains Mono,monospace';
+    sCtx.fillStyle='#1a4a8c'; sCtx.fillText('Signal A',10,16);
+    sCtx.fillStyle='#c94a1a'; sCtx.fillText('Signal B',80,16);
+    sCtx.fillStyle='#6b6460'; sCtx.fillText('↓ DyCoM output below',W-200,16);
+
+    // ── Compute and draw output ─────────────────────────────────────────────
+    const sel = getSelections();
+    const result = computeOutput(sA, sB, sel);
+
+    oCtx.fillStyle='#0d0d0d'; oCtx.fillRect(0,0,OW,OH);
+    oCtx.strokeStyle='rgba(255,255,255,0.08)'; oCtx.lineWidth=0.5;
+    oCtx.beginPath(); oCtx.moveTo(0,OH/2); oCtx.lineTo(OW,OH/2); oCtx.stroke();
+
+    if (result.dual) {
+      // CVPS: draw cos(Δφ) in teal and sin(Δφ) in coral on two halves
+      const halfH = OH / 2;
+      // Top half: cos(Δφ) — synchrony magnitude
+      oCtx.strokeStyle='rgba(255,255,255,0.05)'; oCtx.lineWidth=0.5;
+      oCtx.beginPath(); oCtx.moveTo(0,halfH/2); oCtx.lineTo(OW,halfH/2); oCtx.stroke();
+      // Bottom half: sin(Δφ) — synchrony direction
+      oCtx.beginPath(); oCtx.moveTo(0,halfH+halfH/2); oCtx.lineTo(OW,halfH+halfH/2); oCtx.stroke();
+
+      const cosMax = result.out1.reduce((m,v)=>Math.max(m,Math.abs(v)),1e-9);
+      const sinMax = result.out2.reduce((m,v)=>Math.max(m,Math.abs(v)),1e-9);
+      const cosScale = (halfH * 0.42) / cosMax;
+      const sinScale = (halfH * 0.42) / sinMax;
+
+      // cos(Δφ) in teal
+      oCtx.strokeStyle='#4ecdc4'; oCtx.lineWidth=2; oCtx.beginPath();
+      result.out1.forEach((v,i)=>{ i===0?oCtx.moveTo(i,halfH/2-v*cosScale):oCtx.lineTo(i,halfH/2-v*cosScale); });
+      oCtx.stroke();
+
+      // sin(Δφ) in coral
+      oCtx.strokeStyle='#e8621f'; oCtx.lineWidth=2; oCtx.beginPath();
+      result.out2.forEach((v,i)=>{ i===0?oCtx.moveTo(i,halfH+halfH/2-v*sinScale):oCtx.lineTo(i,halfH+halfH/2-v*sinScale); });
+      oCtx.stroke();
+
+      oCtx.font='9px JetBrains Mono,monospace';
+      oCtx.fillStyle='#4ecdc4'; oCtx.fillText('cos(Δφ) — synchrony strength', 10, 12);
+      oCtx.fillStyle='#e8621f'; oCtx.fillText('sin(Δφ) — synchrony direction (sign = which leads)', 10, halfH+12);
+
+      // Divider
+      oCtx.strokeStyle='rgba(255,255,255,0.15)'; oCtx.lineWidth=0.8;
+      oCtx.setLineDash([4,4]);
+      oCtx.beginPath(); oCtx.moveTo(0,halfH); oCtx.lineTo(OW,halfH); oCtx.stroke();
+      oCtx.setLineDash([]);
+    } else {
+      // Single output — auto-scaled
+      const outMax = result.out1.reduce((m,v)=>Math.max(m,Math.abs(v)),1e-9);
+      const scale  = (OH * 0.44) / outMax;
+      oCtx.strokeStyle='#ffa94d'; oCtx.lineWidth=2; oCtx.beginPath();
+      result.out1.forEach((v,i)=>{ i===0?oCtx.moveTo(i,OH/2-v*scale):oCtx.lineTo(i,OH/2-v*scale); });
+      oCtx.stroke();
+      oCtx.font='9px JetBrains Mono,monospace';
+      oCtx.fillStyle='rgba(255,169,77,0.4)';
+      oCtx.fillText(`max: ${outMax.toFixed(3)}`, OW-95, 12);
+      oCtx.fillText(`min: ${(-outMax).toFixed(3)}`, OW-95, OH-4);
+      oCtx.font='10px JetBrains Mono,monospace';
+      oCtx.fillStyle='rgba(255,169,77,0.7)'; oCtx.fillText('DyCoM output (auto-scaled)',10,14);
+    }
+
+    t += 0.025;
+    dycomSigAnim = requestAnimationFrame(draw);
+  }
+  dycomUpdate();
+  draw();
+}
+
+// ============ PHASE INTERACTIVE ============
+let phaseAnim;
+function initPhase() {
+  if (phaseAnim) cancelAnimationFrame(phaseAnim);
+  const canvas = document.getElementById('phaseCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth; canvas.height = 200;
+  document.getElementById('ps-lead').oninput = () => { document.getElementById('ps-lead-val').textContent = document.getElementById('ps-lead').value + '°'; };
+  document.getElementById('ps-strength').oninput = () => { document.getElementById('ps-strength-val').textContent = (document.getElementById('ps-strength').value / 100).toFixed(2); };
+  document.getElementById('ps-freq').oninput = () => { document.getElementById('ps-freq-val').textContent = parseFloat(document.getElementById('ps-freq').value).toFixed(1) + ' Hz'; };
+  let t = 0;
+  function draw() {
+    const W = canvas.width, H = canvas.height;
+    const lead = parseFloat(document.getElementById('ps-lead').value) * Math.PI / 180;
+    const strength = document.getElementById('ps-strength').value / 100;
+    const freq = parseFloat(document.getElementById('ps-freq').value);
+    ctx.fillStyle = '#fafaf8'; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = '#e5e0d5'; ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(0, H / 2); ctx.lineTo(W, H / 2); ctx.stroke();
+    const N = W;
+    const sigA = [], sigB = [];
+    for (let i = 0; i < N; i++) {
+      const x = i / N;
+      const phaseA = x * Math.PI * 2 * freq + t;
+      const phaseB = phaseA + lead * strength + (1 - strength) * (Math.random() - 0.5) * 2;
+      sigA.push(Math.sin(phaseA) * 0.38);
+      sigB.push(Math.sin(phaseB) * 0.38);
+    }
+    [[sigA, '#1a4a8c', 2], [sigB, '#c94a1a', 2]].forEach(([sig, color, lw]) => {
+      ctx.strokeStyle = color; ctx.lineWidth = lw;
+      ctx.beginPath();
+      sig.forEach((v, i) => { i === 0 ? ctx.moveTo(i, H / 2 - v * H) : ctx.lineTo(i, H / 2 - v * H); });
+      ctx.stroke();
+    });
+    // compute PLV and CVPS
+    let re = 0, im = 0;
+    for (let i = 0; i < N; i++) {
+      const phA = Math.atan2(sigA[i], Math.cos(i / N * Math.PI * 2 * freq + t));
+      const phB = Math.atan2(sigB[i], Math.cos(i / N * Math.PI * 2 * freq + t + lead * strength));
+      const diff = phA - phB;
+      re += Math.cos(diff); im += Math.sin(diff);
+    }
+    re /= N; im /= N;
+    const plv = Math.sqrt(re * re + im * im);
+    const angle = Math.atan2(im, re) * 180 / Math.PI;
+    document.getElementById('plv-val').textContent = plv.toFixed(3) + ' (no direction)';
+    document.getElementById('cvps-val').textContent = `${plv.toFixed(3)} ∠${angle.toFixed(1)}°`;
+    document.getElementById('dir-val').textContent = lead > 0.1 ? 'A leads B' : lead < -0.1 ? 'B leads A' : 'Synchronous';
+    ctx.font = '10px JetBrains Mono, monospace';
+    ctx.fillStyle = '#1a4a8c'; ctx.fillText('● Signal A', 12, 20);
+    ctx.fillStyle = '#c94a1a'; ctx.fillText('● Signal B (phase-shifted)', 100, 20);
+    t += 0.04;
+    phaseAnim = requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// Hero canvas is the only animation that runs on load (home page only).
+// All demo animations only start when the user navigates to the interactive page.
+
+// Start default tab on load
+startDemo('inertia');
+</script>
+</body>
+</html>

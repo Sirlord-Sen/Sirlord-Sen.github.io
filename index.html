@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sir-Lord Wiafe · Sir-Lord Wiafe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f5f2eb;
+  --ink:#0d0d0d;
+  --ink2:#2a2a2a;
+  --muted:#6b6460;
+  --accent:#c94a1a;
+  --accent2:#e8621f;
+  --surface:#ffffff;
+  --surface2:#edeae2;
+  --border:#d4cfc5;
+  --border2:#bfb9ad;
+  --teal:#1a7c6b;
+  --blue:#1a4a8c;
+  --gold:#b8860b;
+  --mono:'JetBrains Mono',monospace;
+  --display:'Bebas Neue',sans-serif;
+  --body:'Outfit',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--bg);color:var(--ink);overflow-x:hidden;cursor:none}
+
+/* CUSTOM CURSOR */
+#cursor{position:fixed;width:10px;height:10px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform 0.1s,width 0.2s,height 0.2s}
+#cursor-ring{position:fixed;width:32px;height:32px;border:1.5px solid var(--accent);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all 0.15s ease;opacity:0.6}
+body:hover #cursor{opacity:1}
+
+/* NAVBAR */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--bg);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 3rem}
+.nav-logo{font-family:var(--display);font-size:22px;letter-spacing:0.05em;color:var(--ink)}
+.nav-logo span{color:var(--accent)}
+.nav-tabs{display:flex;gap:0}
+.nav-tab{padding:0 20px;height:60px;display:flex;align-items:center;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;transition:all 0.2s;background:none;border-left:none;border-right:none;border-top:none;text-decoration:none}
+.nav-tab:hover{color:var(--ink)}
+.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.nav-right{display:flex;align-items:center;gap:16px}
+.nav-badge{font-family:var(--mono);font-size:10px;background:var(--accent);color:#fff;padding:4px 10px;border-radius:2px;letter-spacing:0.05em}
+.nav-cite{font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+
+
+/* ===== HOME PAGE ===== */
+.hero{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 60px)}
+.hero-left{padding:5rem 3rem 3rem;display:flex;flex-direction:column;justify-content:space-between;border-right:1px solid var(--border)}
+.hero-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem;display:flex;align-items:center;gap:10px}
+.hero-eyebrow::before{content:'';display:block;width:32px;height:1px;background:var(--accent)}
+.hero-name{font-family:var(--display);font-size:clamp(72px,9vw,120px);line-height:0.9;letter-spacing:0.02em;color:var(--ink)}
+.hero-name .accent{color:var(--accent)}
+.hero-tagline{font-size:18px;color:var(--muted);line-height:1.6;max-width:480px;margin-top:2rem;font-weight:300}
+.hero-tagline strong{color:var(--ink);font-weight:500}
+.hero-stats{display:flex;gap:3rem;margin-top:3rem}
+.stat-block .num{font-family:var(--display);font-size:48px;color:var(--ink);line-height:1}
+.stat-block .num span{color:var(--accent)}
+.stat-block .lbl{font-size:12px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-top:4px}
+.hero-cta{display:flex;gap:12px;margin-top:3rem}
+.btn-primary{background:var(--accent);color:#fff;padding:12px 28px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;font-weight:500;border:none;cursor:pointer;transition:background 0.2s}
+.btn-primary:hover{background:var(--accent2)}
+.btn-outline{background:transparent;color:var(--ink);padding:12px 28px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;font-weight:500;border:1.5px solid var(--border2);cursor:pointer;transition:border-color 0.2s,color 0.2s}
+.btn-outline:hover{border-color:var(--ink);color:var(--ink)}
+
+/* HERO RIGHT - signal viz */
+.hero-right{position:relative;overflow:hidden;background:var(--ink)}
+canvas#heroCanvas{position:absolute;inset:0;width:100%;height:100%}
+.hero-overlay-text{position:absolute;bottom:3rem;left:3rem;right:3rem}
+.hero-overlay-text h2{font-family:var(--display);font-size:32px;color:#fff;margin-bottom:8px;letter-spacing:0.05em}
+.hero-overlay-text p{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6}
+.hero-tags{position:absolute;top:2rem;right:2rem;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.tag{font-family:var(--mono);font-size:10px;padding:5px 12px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);letter-spacing:0.1em;border:1px solid rgba(255,255,255,0.12)}
+
+/* EXPERTISE STRIP */
+.expertise-strip{display:flex;border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow-x:auto}
+.expertise-item{flex:1;min-width:200px;padding:2rem 2.5rem;border-right:1px solid var(--border);transition:background 0.2s;cursor:pointer}
+.expertise-item:last-child{border-right:none}
+.expertise-item:hover{background:var(--surface)}
+.exp-icon{font-size:22px;margin-bottom:12px}
+.exp-title{font-family:var(--display);font-size:22px;letter-spacing:0.03em;color:var(--ink);margin-bottom:6px}
+.exp-sub{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* CROSS-DOMAIN SECTION */
+.cross-domain{padding:5rem 3rem;background:var(--ink);color:#fff}
+.cross-domain-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:4rem}
+.section-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.section-title-lg{font-family:var(--display);font-size:clamp(40px,5vw,64px);line-height:1;letter-spacing:0.03em}
+.section-desc{font-size:14px;color:rgba(255,255,255,0.5);max-width:320px;line-height:1.7}
+.domain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,0.1)}
+.domain-card{background:var(--ink);padding:2.5rem;transition:background 0.2s}
+.domain-card:hover{background:#1a1a1a}
+.domain-origin{font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:0.1em;margin-bottom:8px}
+.domain-title{font-family:var(--display);font-size:24px;letter-spacing:0.03em;color:#fff;margin-bottom:10px}
+.domain-arrow{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:10px;letter-spacing:0.1em}
+.domain-apps{display:flex;flex-wrap:wrap;gap:6px}
+.domain-app{font-size:11px;padding:4px 10px;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.1)}
+
+/* FEATURED PAPER HOME */
+.featured-home{padding:5rem 3rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.featured-home-label{font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.featured-home-title{font-family:var(--display);font-size:clamp(36px,4vw,56px);line-height:1;color:var(--ink);margin-bottom:1.5rem}
+.featured-home-body{font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:2rem}
+.featured-mini-card{background:var(--surface);border:1px solid var(--border);padding:2rem;position:relative}
+.featured-mini-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+
+/* SKILLS SECTION ON HOME */
+.skills-home{padding:4rem 3rem;background:var(--surface2);border-top:1px solid var(--border)}
+.skills-home-inner{display:grid;grid-template-columns:1fr 2fr;gap:4rem}
+.skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.skill-tag{font-family:var(--mono);font-size:11px;padding:8px 14px;border:1px solid var(--border);color:var(--ink2);letter-spacing:0.05em;transition:all 0.2s;cursor:default}
+.skill-tag:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+.skill-tag.accent{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* ===== RESEARCH PAGE ===== */
+.research-header{padding:4rem 3rem 3rem;border-bottom:1px solid var(--border)}
+.research-header h1{font-family:var(--display);font-size:clamp(48px,6vw,80px);line-height:1;letter-spacing:0.03em;margin-bottom:1rem}
+.research-header p{font-size:15px;color:var(--muted);max-width:600px;line-height:1.7}
+.papers-list{padding:3rem}
+.paper-item{display:grid;grid-template-columns:80px 1fr auto;gap:2rem;align-items:start;padding:2rem 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.2s}
+.paper-item:hover{background:var(--surface);margin:0 -3rem;padding:2rem 3rem}
+.paper-year{font-family:var(--display);font-size:36px;color:var(--border2);letter-spacing:0.02em;padding-top:4px}
+.paper-body{}
+.paper-title{font-family:var(--display);font-size:22px;letter-spacing:0.02em;color:var(--ink);margin-bottom:6px;line-height:1.2}
+.paper-meta{font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:0.1em;margin-bottom:8px}
+.paper-abstract{font-size:13px;color:var(--muted);line-height:1.7;max-width:700px}
+.paper-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ptag{font-size:10px;padding:3px 10px;background:var(--surface2);color:var(--muted);border:1px solid var(--border);letter-spacing:0.05em}
+.ptag.highlight{background:var(--accent);color:#fff;border-color:var(--accent)}
+.paper-venue{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:right;padding-top:4px;white-space:nowrap}
+
+/* ===== SKILLS PAGE ===== */
+.skills-page{padding:4rem 3rem}
+.skills-page h1{font-family:var(--display);font-size:clamp(48px,6vw,80px);letter-spacing:0.03em;margin-bottom:3rem;line-height:1}
+.skills-tiers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2rem;margin-bottom:4rem}
+.skill-tier-card{background:var(--surface);border:1px solid var(--border);padding:2rem}
+.skill-tier-title{font-family:var(--display);font-size:24px;letter-spacing:0.03em;color:var(--ink);margin-bottom:4px}
+.skill-tier-sub{font-size:11px;color:var(--muted);margin-bottom:1.5rem;font-family:var(--mono);letter-spacing:0.08em}
+.skill-list{display:flex;flex-direction:column;gap:12px}
+.skill-row{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.skill-name{color:var(--ink2)}
+.skill-bar-wrap{width:120px;height:3px;background:var(--border)}
+.skill-bar{height:100%;background:var(--accent);transition:width 1.2s ease}
+.skill-level{font-family:var(--mono);font-size:10px;color:var(--muted);min-width:24px;text-align:right}
+
+/* INTERACTIVE DEMO SECTION */
+.demo-section{background:var(--ink);color:#fff;padding:4rem 3rem}
+.demo-section h2{font-family:var(--display);font-size:clamp(36px,4vw,52px);letter-spacing:0.03em;margin-bottom:8px}
+.demo-section .sub{font-size:14px;color:rgba(255,255,255,0.4);margin-bottom:3rem;line-height:1.7}
+.demos-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.demo-card{background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);padding:2rem;cursor:pointer;transition:border-color 0.2s}
+.demo-card:hover{border-color:var(--accent)}
+.demo-card h3{font-family:var(--display);font-size:22px;letter-spacing:0.03em;color:#fff;margin-bottom:8px}
+.demo-card p{font-size:12px;color:rgba(255,255,255,0.4);line-height:1.6;margin-bottom:1.5rem}
+.demo-canvas-wrap{border-radius:2px;overflow:hidden}
+.demo-play{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:0.1em;margin-top:1rem;cursor:pointer}
+
+/* DTW DEMO */
+.dtw-demo{padding:1rem;background:#111;border-radius:2px}
+canvas.dtw-canvas{width:100%;height:100px;display:block}
+
+/* ===== ABOUT PAGE ===== */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 60px)}
+.about-left{padding:5rem 3rem;border-right:1px solid var(--border)}
+.about-left h1{font-family:var(--display);font-size:clamp(56px,7vw,90px);letter-spacing:0.03em;line-height:0.9;margin-bottom:3rem}
+.about-para{font-size:15px;color:var(--muted);line-height:1.9;margin-bottom:1.5rem}
+.about-para strong{color:var(--ink)}
+.about-right{padding:5rem 3rem;background:var(--surface)}
+.timeline{position:relative;padding-left:2rem}
+.timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border)}
+.tl-item{position:relative;margin-bottom:2.5rem}
+.tl-item::before{content:'';position:absolute;left:-2rem;top:6px;width:8px;height:8px;border-radius:50%;background:var(--accent);border:2px solid var(--bg)}
+.tl-date{font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:0.1em;margin-bottom:4px}
+.tl-title{font-weight:500;font-size:15px;color:var(--ink);margin-bottom:2px}
+.tl-org{font-size:13px;color:var(--muted)}
+.contact-strip{padding:3rem;background:var(--ink);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.contact-strip h2{font-family:var(--display);font-size:36px;color:#fff;letter-spacing:0.03em}
+.contact-links{display:flex;gap:16px;flex-wrap:wrap}
+.contact-link{font-family:var(--mono);font-size:11px;padding:10px 20px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);cursor:pointer;transition:all 0.2s;text-decoration:none}
+.contact-link:hover{background:#fff;color:var(--ink)}
+
+/* ===== INTERACTIVE PAGE ===== */
+.interactive-page{padding:4rem 3rem}
+.interactive-page h1{font-family:var(--display);font-size:clamp(48px,6vw,80px);letter-spacing:0.03em;margin-bottom:8px;line-height:1}
+.interactive-page .sub{font-size:14px;color:var(--muted);max-width:600px;line-height:1.7;margin-bottom:3rem}
+.int-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:3rem}
+.int-tab{padding:12px 24px;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;background:none;border-left:none;border-right:none;border-top:none}
+.int-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.int-panel{display:none}
+.int-panel.active{display:block}
+
+/* DTW Interactive */
+.dtw-interactive{background:var(--surface);border:1px solid var(--border);padding:2rem}
+.dtw-controls{display:flex;gap:2rem;margin-bottom:2rem;flex-wrap:wrap}
+.ctrl{display:flex;flex-direction:column;gap:6px}
+.ctrl label{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-family:var(--mono)}
+.ctrl input[type=range]{width:180px;accent-color:var(--accent)}
+.ctrl-val{font-family:var(--mono);font-size:12px;color:var(--accent)}
+canvas#dtwMainCanvas{width:100%;height:200px;display:block;background:#fafaf8;border:1px solid var(--border)}
+
+/* Inertia Interactive */
+.inertia-int{background:var(--surface);border:1px solid var(--border);padding:2rem}
+canvas#inertiaMainCanvas{width:100%;height:200px;display:block;background:#0d0d0d;border:1px solid var(--border)}
+.regime-row{display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap}
+.rg-badge{padding:8px 18px;font-size:12px;font-weight:500;letter-spacing:0.06em;border:1.5px solid var(--border);cursor:pointer;transition:all 0.2s}
+.rg-badge.locked-active{background:#1a7c6b;color:#fff;border-color:#1a7c6b}
+.rg-badge.stabilizing-active{background:#b8860b;color:#fff;border-color:#b8860b}
+.rg-badge.shifting-active{background:#c94a1a;color:#fff;border-color:#c94a1a}
+
+/* DyCoM viz */
+.dycom-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-top:1rem}
+.dycom-op{background:var(--surface);padding:1.5rem 1rem;text-align:center;cursor:pointer;transition:background 0.2s}
+.dycom-op:hover{background:var(--ink);color:#fff}
+.dycom-op:hover .dycom-op-title{color:#fff}
+.dycom-op:hover .dycom-op-sub{color:rgba(255,255,255,0.5)}
+.dycom-op-icon{font-size:24px;margin-bottom:8px}
+.dycom-op-title{font-family:var(--display);font-size:18px;letter-spacing:0.03em;color:var(--ink);margin-bottom:4px}
+.dycom-op-sub{font-size:11px;color:var(--muted);line-height:1.4}
+.dycom-output{background:var(--surface2);border:1px solid var(--border);padding:1.5rem;margin-top:1rem;font-size:13px;color:var(--ink2);line-height:1.7;font-family:var(--mono);min-height:80px}
+
+/* SCROLL ANIMATION */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity 0.6s ease,transform 0.6s ease}
+.reveal.visible{opacity:1;transform:none}
+
+/* TICKER */
+.ticker-wrap{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--ink);padding:12px 0}
+.ticker{display:flex;gap:0;white-space:nowrap;animation:ticker 40s linear infinite}
+.ticker-item{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:0.1em;padding:0 3rem}
+.ticker-item span{color:var(--accent)}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* Footer */
+footer{background:var(--ink);padding:3rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;border-top:1px solid rgba(255,255,255,0.05)}
+footer p{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:0.05em}
+.footer-links{display:flex;gap:20px}
+.footer-links a{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.4);text-decoration:none;letter-spacing:0.08em;cursor:pointer}
+.footer-links a:hover{color:var(--accent)}
+
+/* MOBILE */
+@media(max-width:768px){
+  nav{padding:0 1.5rem}
+  .nav-tabs{display:none}
+  .hero{grid-template-columns:1fr}
+  .hero-right{height:40vh}
+  .hero-left{padding:3rem 1.5rem}
+  .domain-grid{grid-template-columns:1fr}
+  .featured-home{grid-template-columns:1fr;padding:3rem 1.5rem}
+  .about-grid{grid-template-columns:1fr}
+  .skills-tiers{grid-template-columns:1fr}
+  .demos-grid{grid-template-columns:1fr}
+  .papers-list{padding:1.5rem}
+  .paper-item{grid-template-columns:1fr;gap:0.5rem}
+  .paper-year{font-size:24px}
+}
+</style>
+
+</head>
+<body>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<nav>
+  <div class="nav-logo">SIR<span>-</span>LORD<span style="color:var(--ink)"> WIAFE</span></div>
+  <div class="nav-tabs">
+    <a class="nav-tab active" href="index.html">Home</a>
+    <a class="nav-tab" href="research.html">Research</a>
+    <a class="nav-tab" href="skills.html">Skills</a>
+    <a class="nav-tab" href="interactive.html">Interactive</a>
+    <a class="nav-tab" href="about.html">About</a>
+  </div>
+  <div class="nav-right">
+    <span class="nav-cite">60 Citations</span>
+    <span class="nav-badge">Hiring</span>
+  </div>
+</nav>
+<div style="padding-top:60px">
+<div class="hero">
+    <div class="hero-left">
+      <div>
+        <div class="hero-eyebrow">Computational Systems Engineer</div>
+        <div class="hero-name">SIR<br><span class="accent">LORD</span><br>WIAFE</div>
+        <p class="hero-tagline">I build <strong>frameworks that decode how complex systems evolve over time</strong> — from brain networks to any domain where history shapes the present. Agentic AI. Dynamic systems. Operator theory. Signal processing. State estimation.</p>
+        <div class="hero-stats">
+          <div class="stat-block"><div class="num">26<span>+</span></div><div class="lbl">Publications</div></div>
+          <div class="stat-block"><div class="num">60<span>+</span></div><div class="lbl">Citations</div></div>
+          <div class="stat-block"><div class="num">5<span>+</span></div><div class="lbl">Frameworks Built</div></div>
+        </div>
+        <div class="hero-cta">
+          <button class="btn-primary" onclick="showPage('research',document.querySelectorAll('.nav-tab')[1])">View Research</button>
+          <button class="btn-outline" onclick="showPage('about',document.querySelectorAll('.nav-tab')[4])">About Me</button>
+        </div>
+      </div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:0.05em">
+        PhD Candidate · TReNDS Center · Georgia State University · Atlanta, GA
+      </div>
+    </div>
+    <div class="hero-right">
+      <canvas id="heroCanvas"></canvas>
+      <div class="hero-tags">
+        <span class="tag">AGENTIC AI</span>
+        <span class="tag">DYNAMIC SYSTEMS</span>
+        <span class="tag">SIGNAL PROCESSING</span>
+        <span class="tag">CONTROL THEORY</span>
+        <span class="tag">STATE ESTIMATION</span>
+        <span class="tag">OPERATOR THEORY</span>
+      </div>
+      <div class="hero-overlay-text">
+        <h2>Real-Time System Dynamics</h2>
+        <p>Visualizing time-varying interactions across a complex network — the core of every framework I build.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <span class="ticker-item">Agentic AI &nbsp;·&nbsp; <span>Autonomous Systems</span></span>
+      <span class="ticker-item">Dynamic Time Warping &nbsp;·&nbsp; <span>Warp Quantification</span></span>
+      <span class="ticker-item">Inertial State-Space Model &nbsp;·&nbsp; <span>Functional Inertia</span></span>
+      <span class="ticker-item">DyCoM &nbsp;·&nbsp; <span>Operator Framework</span></span>
+      <span class="ticker-item">Complex-Valued Phase Synchrony &nbsp;·&nbsp; <span>Directional Coupling</span></span>
+      <span class="ticker-item">Kalman Filtering &nbsp;·&nbsp; <span>State Estimation</span></span>
+      <span class="ticker-item">Communication Theory &nbsp;·&nbsp; <span>Signal Processing</span></span>
+      <span class="ticker-item">Agentic AI &nbsp;·&nbsp; <span>Autonomous Systems</span></span>
+      <span class="ticker-item">Dynamic Time Warping &nbsp;·&nbsp; <span>Warp Quantification</span></span>
+      <span class="ticker-item">Inertial State-Space Model &nbsp;·&nbsp; <span>Functional Inertia</span></span>
+      <span class="ticker-item">DyCoM &nbsp;·&nbsp; <span>Operator Framework</span></span>
+      <span class="ticker-item">Complex-Valued Phase Synchrony &nbsp;·&nbsp; <span>Directional Coupling</span></span>
+      <span class="ticker-item">Kalman Filtering &nbsp;·&nbsp; <span>State Estimation</span></span>
+      <span class="ticker-item">Communication Theory &nbsp;·&nbsp; <span>Signal Processing</span></span>
+    </div>
+  </div>
+
+  <!-- EXPERTISE STRIP -->
+  <div class="expertise-strip reveal">
+    <div class="expertise-item">
+      <div class="exp-icon">⟁</div>
+      <div class="exp-title">Agentic AI</div>
+      <div class="exp-sub">Building autonomous, goal-directed AI systems that perceive, reason, and act across complex environments</div>
+    </div>
+    <div class="expertise-item">
+      <div class="exp-icon">⊞</div>
+      <div class="exp-title">Operator Frameworks</div>
+      <div class="exp-sub">Composing signal processing operations into unified, domain-agnostic architectures</div>
+    </div>
+    <div class="expertise-item">
+      <div class="exp-icon">∿</div>
+      <div class="exp-title">Dynamic Analysis</div>
+      <div class="exp-sub">Time-varying systems, state-space modeling, and temporal alignment algorithms</div>
+    </div>
+    <div class="expertise-item">
+      <div class="exp-icon">⊛</div>
+      <div class="exp-title">State Estimation</div>
+      <div class="exp-sub">Kalman filtering, inertial constraints, and history-dependent state evolution</div>
+    </div>
+    <div class="expertise-item">
+      <div class="exp-icon">⊗</div>
+      <div class="exp-title">Phase & Amplitude</div>
+      <div class="exp-sub">Complex-valued synchrony, directional coupling detection, wavelet analysis</div>
+    </div>
+    <div class="expertise-item">
+      <div class="exp-icon">◈</div>
+      <div class="exp-title">Systems Engineering</div>
+      <div class="exp-sub">Backend development, algorithm design, ML pipelines, and software architecture</div>
+    </div>
+  </div>
+
+  <!-- CROSS DOMAIN -->
+  <div class="cross-domain reveal">
+    <div class="cross-domain-header">
+      <div>
+        <div class="section-eyebrow">Beyond The Brain</div>
+        <div class="section-title-lg" style="color:#fff">My Methods,<br>Any Domain</div>
+      </div>
+      <p class="section-desc">Every framework I've built is intentionally representation-agnostic. The math doesn't care if the signals come from brains, markets, or machines.</p>
+    </div>
+    <div class="domain-grid">
+      <div class="domain-card">
+        <div class="domain-origin">From: Functional Inertia (ISSM)</div>
+        <div class="domain-title">State-Space Modeling</div>
+        <div class="domain-arrow">→ APPLIES TO:</div>
+        <div class="domain-apps">
+          <span class="domain-app">Robotics Trajectory</span>
+          <span class="domain-app">Financial Markets</span>
+          <span class="domain-app">Autonomous Vehicles</span>
+          <span class="domain-app">IoT Sensor Networks</span>
+          <span class="domain-app">Climate Systems</span>
+        </div>
+      </div>
+      <div class="domain-card">
+        <div class="domain-origin">From: DyCoM Framework</div>
+        <div class="domain-title">Operator Decomposition</div>
+        <div class="domain-arrow">→ APPLIES TO:</div>
+        <div class="domain-apps">
+          <span class="domain-app">Audio Processing</span>
+          <span class="domain-app">Radar / Sonar</span>
+          <span class="domain-app">Network Traffic</span>
+          <span class="domain-app">ECG / EEG Analysis</span>
+          <span class="domain-app">Multi-agent Systems</span>
+        </div>
+      </div>
+      <div class="domain-card">
+        <div class="domain-origin">From: Warp Elasticity / DTW</div>
+        <div class="domain-title">Temporal Alignment</div>
+        <div class="domain-arrow">→ APPLIES TO:</div>
+        <div class="domain-apps">
+          <span class="domain-app">Speech Recognition</span>
+          <span class="domain-app">Gesture Detection</span>
+          <span class="domain-app">Time-Series Prediction</span>
+          <span class="domain-app">Manufacturing QA</span>
+          <span class="domain-app">Video Understanding</span>
+        </div>
+      </div>
+      <div class="domain-card">
+        <div class="domain-origin">From: Complex-Valued Phase Synchrony</div>
+        <div class="domain-title">Directional Coupling</div>
+        <div class="domain-arrow">→ APPLIES TO:</div>
+        <div class="domain-apps">
+          <span class="domain-app">Power Grid Stability</span>
+          <span class="domain-app">Oscillator Networks</span>
+          <span class="domain-app">Communications</span>
+          <span class="domain-app">Coupled Oscillators</span>
+        </div>
+      </div>
+      <div class="domain-card">
+        <div class="domain-origin">From: Timescale-Aligned Amplitude Balance / DTW</div>
+        <div class="domain-title">Signal Balance Mapping</div>
+        <div class="domain-arrow">→ APPLIES TO:</div>
+        <div class="domain-apps">
+          <span class="domain-app">Battery Management</span>
+          <span class="domain-app">Thermal Systems</span>
+          <span class="domain-app">Resource Allocation</span>
+          <span class="domain-app">Smart Grids</span>
+        </div>
+      </div>
+      <div class="domain-card">
+        <div class="domain-origin">From: Communication Theory + FC</div>
+        <div class="domain-title">Signal Complementarity</div>
+        <div class="domain-arrow">→ APPLIES TO:</div>
+        <div class="domain-apps">
+          <span class="domain-app">Sensor Fusion</span>
+          <span class="domain-app">Multi-modal Systems</span>
+          <span class="domain-app">Wireless Networks</span>
+          <span class="domain-app">Fault Detection</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURED PAPER -->
+  <div class="featured-home reveal">
+    <div>
+      <div class="featured-home-label">Latest Work · 2026</div>
+      <div class="featured-home-title">Functional Inertia Reveals History-Dependent Organization</div>
+      <p class="featured-home-body">The brain does not process the present in isolation. I formalized this as <strong>functional inertia</strong> — a quantifiable, representation-agnostic constraint describing how accumulated history resists ongoing reorganization in any dynamical system. The framework operates coherently at three scales simultaneously: dynamical regimes, system-level magnitude, and circuit-level distribution.</p>
+      <button class="btn-outline" onclick="showPage('research',document.querySelectorAll('.nav-tab')[1])" style="margin-top:1rem">See All Papers →</button>
+    </div>
+    <div class="featured-mini-card">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--accent);letter-spacing:0.1em;margin-bottom:1rem">KEY CONTRIBUTIONS</div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:12px;align-items:start">
+          <div style="width:24px;height:24px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0">1</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.6">Inertial State-Space Model (ISSM) — formalizes accumulated history as a latent state variable</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:start">
+          <div style="width:24px;height:24px;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0">2</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.6">Three recurrent dynamical regimes: Locked, Stabilizing, Shifting</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:start">
+          <div style="width:24px;height:24px;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0">3</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.6">Same constraint → opposite clinical signatures depending on system context</div>
+        </div>
+      </div>
+      <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border);display:flex;justify-content:space-between">
+        <span style="font-family:var(--mono);font-size:10px;color:var(--muted)">NIH R01MH123610 · NSF #2112455</span>
+        <span style="font-family:var(--mono);font-size:10px;color:var(--accent)">2026</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SKILLS BRIEF -->
+  <div class="skills-home reveal">
+    <div class="skills-home-inner">
+      <div>
+        <div class="section-eyebrow" style="color:var(--accent)">Technical Toolkit</div>
+        <div class="section-title-lg" style="font-family:var(--display);font-size:48px;color:var(--ink);line-height:1;letter-spacing:0.03em">Built to<br>Engineer.</div>
+        <p style="font-size:14px;color:var(--muted);margin-top:1rem;line-height:1.7;max-width:320px">Electrical engineering roots. Computer science PhD. Software development experience. The full stack of a systems engineer.</p>
+        <button class="btn-primary" onclick="showPage('skills',document.querySelectorAll('.nav-tab')[2])" style="margin-top:2rem">Full Skill Profile →</button>
+      </div>
+      <div class="skills-grid">
+        <span class="skill-tag accent">Agentic AI</span>
+        <span class="skill-tag accent">Dynamic Systems</span>
+        <span class="skill-tag">Python · MATLAB</span>
+        <span class="skill-tag">Signal Processing</span>
+        <span class="skill-tag">State-Space Models</span>
+        <span class="skill-tag">Kalman Filtering</span>
+        <span class="skill-tag">Machine Learning</span>
+        <span class="skill-tag">Temporal Alignment</span>
+        <span class="skill-tag">Control Theory</span>
+        <span class="skill-tag">Operator Theory</span>
+        <span class="skill-tag">Backend (Node/SQL)</span>
+        <span class="skill-tag">Neuroimaging (fMRI)</span>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 Sir-Lord Wiafe · TReNDS Center · lodwaf12@gmail.com</p>
+    <div class="footer-links">
+      <a href="https://scholar.google.com/citations?user=9smPY8wAAAAJ" target="_blank">Google Scholar</a>
+      <a href="https://github.com/Sirlord-Sen" target="_blank">GitHub</a>
+      <a href="https://linkedin.com/in/sir-lord" target="_blank">LinkedIn</a>
+    </div>
+  </footer>
+</div>
+<script>
+// CURSOR
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px'; cur.style.top = e.clientY + 'px';
+  setTimeout(() => { ring.style.left = e.clientX + 'px'; ring.style.top = e.clientY + 'px'; }, 60);
+});
+document.querySelectorAll('button,a,.paper-item,.expertise-item,.domain-card,.skill-tag').forEach(el => {
+  el.addEventListener('mouseenter', () => { ring.style.width='48px'; ring.style.height='48px'; ring.style.borderColor='#c94a1a'; });
+  el.addEventListener('mouseleave', () => { ring.style.width='32px'; ring.style.height='32px'; ring.style.borderColor='#c94a1a'; });
+});
+
+// REVEAL ON SCROLL
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+<script>
+// ============ HERO CANVAS ============
+const heroCanvas = document.getElementById('heroCanvas');
+const hctx = heroCanvas.getContext('2d');
+function resizeHero() { heroCanvas.width = heroCanvas.offsetWidth; heroCanvas.height = heroCanvas.offsetHeight; }
+resizeHero(); window.addEventListener('resize', resizeHero);
+let ht = 0;
+const nodes = Array.from({length: 22}, (_, i) => ({
+  x: Math.random(), y: Math.random(),
+  vx: (Math.random() - 0.5) * 0.0008,
+  vy: (Math.random() - 0.5) * 0.0008,
+  phase: Math.random() * Math.PI * 2,
+  amp: 0.3 + Math.random() * 0.7
+}));
+function drawHero() {
+  const W = heroCanvas.width, H = heroCanvas.height;
+  hctx.fillStyle = '#0d0d0d';
+  hctx.fillRect(0, 0, W, H);
+  nodes.forEach(n => {
+    n.x += n.vx; n.y += n.vy;
+    if (n.x < 0 || n.x > 1) n.vx *= -1;
+    if (n.y < 0 || n.y > 1) n.vy *= -1;
+  });
+  nodes.forEach((a, i) => {
+    nodes.slice(i + 1).forEach(b => {
+      const dx = (a.x - b.x) * W, dy = (a.y - b.y) * H;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < W * 0.22) {
+        const phaseDiff = Math.abs(Math.sin(ht * 0.02 + a.phase - b.phase));
+        const alpha = (1 - dist / (W * 0.22)) * 0.4 * phaseDiff;
+        hctx.strokeStyle = `rgba(201, 74, 26, ${alpha})`;
+        hctx.lineWidth = 0.8;
+        hctx.beginPath();
+        hctx.moveTo(a.x * W, a.y * H);
+        hctx.lineTo(b.x * W, b.y * H);
+        hctx.stroke();
+      }
+    });
+  });
+  nodes.forEach(n => {
+    const pulse = 0.5 + 0.5 * Math.sin(ht * 0.03 + n.phase);
+    const r = 2 + n.amp * 3 * pulse;
+    hctx.beginPath();
+    hctx.arc(n.x * W, n.y * H, r, 0, Math.PI * 2);
+    hctx.fillStyle = `rgba(201, 74, 26, ${0.4 + 0.6 * pulse})`;
+    hctx.fill();
+  });
+  ht++;
+  requestAnimationFrame(drawHero);
+}
+drawHero();
+</script>
+</body>
+</html>
