@@ -28,6 +28,7 @@
 }
 html{scroll-behavior:smooth}
 body{font-family:var(--body);background:var(--bg);color:var(--ink);overflow-x:hidden;cursor:none}
+@media(max-width:768px){body,*{cursor:auto !important}#cursor,#cursor-ring{display:none}}
 
 /* CUSTOM CURSOR */
 #cursor{position:fixed;width:10px;height:10px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform 0.1s,width 0.2s,height 0.2s}
@@ -240,21 +241,98 @@ footer p{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.3);lett
 .footer-links a{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.4);text-decoration:none;letter-spacing:0.08em;cursor:pointer}
 .footer-links a:hover{color:var(--accent)}
 
-/* MOBILE */
+/* HAMBURGER */
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:none;z-index:1100}
+.hamburger span{display:block;width:24px;height:2px;background:var(--ink);transition:all 0.3s}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* MOBILE DRAWER */
+.mobile-menu{display:none;position:fixed;top:60px;left:0;right:0;background:var(--bg);border-bottom:2px solid var(--accent);z-index:999;flex-direction:column;padding:1rem 0;box-shadow:0 8px 24px rgba(0,0,0,0.12)}
+.mobile-menu.open{display:flex}
+.mobile-menu a{padding:14px 2rem;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;font-weight:500;color:var(--muted);text-decoration:none;border-bottom:1px solid var(--border);transition:color 0.2s,background 0.2s}
+.mobile-menu a:last-child{border-bottom:none}
+.mobile-menu a:hover,.mobile-menu a.active{color:var(--accent);background:var(--surface)}
+.mobile-overlay{display:none;position:fixed;inset:0;top:60px;background:rgba(0,0,0,0.3);z-index:998}
+.mobile-overlay.open{display:block}
+
+/* RESPONSIVE */
 @media(max-width:768px){
-  nav{padding:0 1.5rem}
+  body{overflow-x:hidden}
+  nav{padding:0 1.2rem}
   .nav-tabs{display:none}
-  .hero{grid-template-columns:1fr}
-  .hero-right{height:40vh}
-  .hero-left{padding:3rem 1.5rem}
+  .nav-right{gap:8px}
+  .nav-cite{display:none}
+  .nav-badge{font-size:9px;padding:3px 8px}
+  .hamburger{display:flex}
+
+  /* Hero */
+  .hero{grid-template-columns:1fr;min-height:auto}
+  .hero-left{padding:2rem 1.2rem;border-right:none;border-bottom:1px solid var(--border)}
+  .hero-right{height:35vh}
+  .hero-name{font-size:clamp(52px,14vw,80px)}
+  .hero-tagline{font-size:15px;max-width:100%}
+  .hero-stats{gap:1.5rem;flex-wrap:wrap}
+  .hero-cta{flex-wrap:wrap}
+  .hero-tags{display:none}
+
+  /* Expertise strip */
+  .expertise-strip{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .expertise-item{min-width:160px;padding:1.5rem}
+
+  /* Cross domain */
+  .cross-domain{padding:3rem 1.2rem}
+  .cross-domain-header{flex-direction:column;align-items:flex-start;gap:1rem;margin-bottom:2rem}
+  .section-desc{max-width:100%}
   .domain-grid{grid-template-columns:1fr}
-  .featured-home{grid-template-columns:1fr;padding:3rem 1.5rem}
+
+  /* Featured */
+  .featured-home{grid-template-columns:1fr;padding:2.5rem 1.2rem;gap:2rem}
+
+  /* Skills home */
+  .skills-home{padding:2.5rem 1.2rem}
+  .skills-home-inner{grid-template-columns:1fr;gap:2rem}
+  .skills-grid{grid-template-columns:1fr 1fr}
+
+  /* Research */
+  .research-header{padding:2rem 1.2rem}
+  .papers-list{padding:0 1.2rem}
+  .paper-item{grid-template-columns:1fr;gap:0.5rem;padding:1.5rem 0}
+  .paper-item:hover{margin:0;padding:1.5rem 0}
+  .paper-year{font-size:22px}
+  .paper-venue{text-align:left;padding-top:0}
+
+  /* Skills page */
+  .skills-page{padding:2rem 1.2rem}
+  .skills-tiers{grid-template-columns:1fr;gap:1.5rem}
+  .skill-bar-wrap{width:80px}
+
+  /* Interactive */
+  .interactive-page{padding:2rem 1.2rem}
+  .int-tabs{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .int-tab{white-space:nowrap;padding:10px 16px;font-size:11px}
+  .dtw-controls{gap:1rem}
+  .ctrl input[type=range]{width:140px}
+  .dycom-grid,.demos-grid{grid-template-columns:1fr 1fr}
+  .regime-row{gap:0.5rem}
+  .rg-badge{padding:6px 12px;font-size:11px}
+
+  /* About */
   .about-grid{grid-template-columns:1fr}
-  .skills-tiers{grid-template-columns:1fr}
-  .demos-grid{grid-template-columns:1fr}
-  .papers-list{padding:1.5rem}
-  .paper-item{grid-template-columns:1fr;gap:0.5rem}
-  .paper-year{font-size:24px}
+  .about-left{padding:2rem 1.2rem;border-right:none;border-bottom:1px solid var(--border)}
+  .about-right{padding:2rem 1.2rem}
+  .contact-strip{flex-direction:column;align-items:flex-start;padding:2rem 1.2rem}
+  .contact-links{flex-wrap:wrap;gap:10px}
+
+  /* Footer */
+  footer{flex-direction:column;align-items:flex-start;padding:2rem 1.2rem;gap:1rem}
+}
+
+@media(max-width:480px){
+  .skills-grid{grid-template-columns:1fr}
+  .dycom-grid{grid-template-columns:1fr 1fr}
+  .hero-cta .btn-primary,.hero-cta .btn-outline{width:100%;justify-content:center}
 }
 </style>
 
@@ -274,8 +352,19 @@ footer p{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.3);lett
   <div class="nav-right">
     <span class="nav-cite">60+ Citations</span>
     <span class="nav-badge">Open to Work</span>
+    <button class="hamburger" id="hamburger" aria-label="Menu" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
+<div class="mobile-overlay" id="mobileOverlay" onclick="closeMenu()"></div>
+<div class="mobile-menu" id="mobileMenu">
+    <a href="index.html" class="" onclick="closeMenu()">Home</a>
+    <a href="research.html" class="" onclick="closeMenu()">Research</a>
+    <a href="skills.html" class="active" onclick="closeMenu()">Skills</a>
+    <a href="interactive.html" class="" onclick="closeMenu()">Interactive</a>
+    <a href="about.html" class="" onclick="closeMenu()">About</a>
+</div>
 <div style="padding-top:60px">
 <div class="skills-page">
     <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:12px">Full Profile</div>
@@ -389,6 +478,24 @@ function animateBars() {
   }, 300);
 }
 animateBars();
+</script>
+<script>
+function toggleMenu() {
+  const menu    = document.getElementById('mobileMenu');
+  const overlay = document.getElementById('mobileOverlay');
+  const burger  = document.getElementById('hamburger');
+  const isOpen  = menu.classList.contains('open');
+  if (isOpen) { closeMenu(); }
+  else { menu.classList.add('open'); overlay.classList.add('open'); burger.classList.add('open'); }
+}
+function closeMenu() {
+  const menu    = document.getElementById('mobileMenu');
+  const overlay = document.getElementById('mobileOverlay');
+  const burger  = document.getElementById('hamburger');
+  menu.classList.remove('open'); overlay.classList.remove('open'); burger.classList.remove('open');
+}
+// Close menu on resize to desktop
+window.addEventListener('resize', () => { if (window.innerWidth > 768) closeMenu(); });
 </script>
 </body>
 </html>
